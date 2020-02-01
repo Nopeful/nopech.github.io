@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/02/01/Java-%E6%B5%81/</loc>
+    
+    <lastmod>2020-02-01T14:59:53.446Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/mypage/index.html</loc>
+    
+    <lastmod>2020-02-01T10:20:03.307Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/about/index.html</loc>
+    
+    <lastmod>2020-02-01T09:50:15.822Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/tags/index.html</loc>
+    
+    <lastmod>2020-02-01T06:18:36.815Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2020/01/24/%E6%B5%85%E6%9E%90Java%E7%BA%BF%E7%A8%8B%EF%BC%88%E4%BA%8C%EF%BC%89/</loc>
     
     <lastmod>2020-02-01T05:52:26.245Z</lastmod>
@@ -110,27 +138,6 @@
     <loc>http://yoursite.com/2020/01/14/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</loc>
     
     <lastmod>2020-02-01T05:34:00.202Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/mypage/index.html</loc>
-    
-    <lastmod>2020-02-01T04:07:57.018Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/tags/index.html</loc>
-    
-    <lastmod>2020-01-31T10:40:45.495Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/about/index.html</loc>
-    
-    <lastmod>2020-01-30T10:46:24.708Z</lastmod>
     
   </url>
   

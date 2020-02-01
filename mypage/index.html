@@ -13,7 +13,7 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
 
 
@@ -47,22 +47,27 @@
   };
 </script>
 
-  <meta name="description" content="header, section, footer, aside, nav, article, figure, figcaption {         display: block;}     body {         color: #666666;         background-color: #f9f8f6;         background-position: cent">
+  <meta name="description" content="HOME             ABOUT ME             TAGS             CATEGORIES             ARCHIVES             DATES ME">
 <meta property="og:type" content="website">
 <meta property="og:title" content="博客总览">
 <meta property="og:url" content="http://yoursite.com/mypage/index.html">
 <meta property="og:site_name" content="Nopech&#39;s Blog">
-<meta property="og:description" content="header, section, footer, aside, nav, article, figure, figcaption {         display: block;}     body {         color: #666666;         background-color: #f9f8f6;         background-position: cent">
+<meta property="og:description" content="HOME             ABOUT ME             TAGS             CATEGORIES             ARCHIVES             DATES ME">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/img/header.jpg">
 <meta property="og:image" content="http://yoursite.com/img/xzqsy.jpg">
 <meta property="og:image" content="http://yoursite.com/img/night.jpg">
 <meta property="article:published_time" content="2020-01-12T12:45:33.000Z">
-<meta property="article:modified_time" content="2020-02-01T04:07:57.018Z">
+<meta property="article:modified_time" content="2020-02-01T10:20:03.307Z">
 <meta property="article:author" content="Nopech">
 <meta property="article:tag" content="java">
-<meta property="article:tag" content=" web">
+<meta property="article:tag" content=" HTML">
+<meta property="article:tag" content=" CSS">
+<meta property="article:tag" content=" JavaScript">
+<meta property="article:tag" content=" Hexo + GitHub">
+<meta property="article:tag" content=" SpringBoot">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/img/xzqsy.jpg">
+<meta name="twitter:image" content="http://yoursite.com/img/header.jpg">
 
 <link rel="canonical" href="http://yoursite.com/mypage/">
 
@@ -157,12 +162,12 @@
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">10</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">16</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">17</span></a>
 
   </li>
         <li class="menu-item menu-item-outlook">
@@ -241,7 +246,75 @@
       
       
       <div class="post-body">
-          <style type="text/css">
+          <img src="/img/header.jpg">
+
+<header>
+    <section class="mynav">
+        <ul>
+            <li><a href="https://www.nopech.cn" target="_blank" rel="noopener">HOME</a></li>
+            <li><a href="https://nopech.cn/about/" target="_blank" rel="noopener">ABOUT ME</a></li>
+            <li><a href="https://nopech.cn/tags/" target="_blank" rel="noopener">TAGS</a></li>
+            <li><a href="https://nopech.cn/categories/" target="_blank" rel="noopener">CATEGORIES</a></li>
+            <li><a href="https://nopech.cn/archives/" target="_blank" rel="noopener">ARCHIVES</a></li>
+            <li><a href="mailto:1206805300@qq.com">DATES ME</a></li>
+        </ul>
+    </section>
+</header>
+
+
+<section class="courses">
+    <article>
+        <figure>
+            <img src="/img/xzqsy.jpg" alt="xiazhiqiu shiyu" />
+        </figure>
+        <hgroup>
+            <h2>Chit Chat</h2>
+            <h3>You build it, You run it.</h3>
+        </hgroup>
+        <p>Don't worry about your program's being abnormal. If it always runs correctly, we may have made a make a great achievement already.</p>
+    </article>    
+    <article>
+        <figure>
+            <img src="/img/night.jpg" alt="pleasant picture" />
+        </figure>
+        <hgroup>
+            <h2>Go Big or Go Home</h2>
+            <h3>Stay hungry, stay foolish</h3>
+        </hgroup>
+        <p>Maybe sometimes, the bad thing is that you dare not modify a block of code. But the worse thing is that you wrote the code yourself.</p>
+    </article>    
+</section>
+<aside>
+    <section class="popular-recipes">
+        <h2>Includes</h2>
+        <a href="https://github.com/Nopeful/" target="_blank" rel="noopener">GitHub Link</a>
+        <a href="https://weibo.com/hasakiwa" target="_blank" rel="noopener">Weibo Link</a>
+        <a href="mailto:nopeyeply@gamil.com">E-Mail Link</a>
+        <a href="https://twitter.com/Nope98687797" target="_blank" rel="noopener">Twitter Link</a>
+        <br>
+        <br>
+        <br>
+        <br>
+    </section>
+    <section class="contact-details">
+        <h2>Contact</h2>
+        <p>Chit Chat<br />
+            Core Java Volume<br />
+            Algorithm<br />
+            HTML-CSS-JavaScript</p>
+    </section>
+</aside>
+
+
+
+
+
+<footer>
+    &copy; 2020 Nopech's Blog
+</footer>
+
+
+<style type="text/css">
     header, section, footer, aside, nav, article, figure, figcaption {
         display: block;}
     body {
@@ -250,37 +323,28 @@
         background-position: center;
         font-family: Georgia, Times, serif;
         line-height: 1.4em;
-        margin: 0px;}
-    .wrapper {
-        width: auto;
-        margin: 20px auto 20px auto;
-        border: 2px solid #000000;
-        background-color: #ffffff;}
+        margin: 0px;
+        width: auto;}
     header {
-        background-image: url("/img/header.jpg");
         background-repeat: no-repeat;
         padding: 0px auto 0px 0px;
         height: auto;
         top: 0px;
         width: auto;}
-    h1 {
-        width: auto;
-        height: 130px;
-        margin: 0px;}
-    nav, footer {
+    footer, .mynav {
         clear: both;
         color: #ffffff;
         background-color: #aeaca8;
         height: 30px;}
-    nav ul {
+    section ul {
         margin: 0px;
         padding: 5px 0px 5px 30px;}
-    nav li {
+    section li {
         display: inline;
         margin-right: 40px;}
-    nav li a {
+    section li a {
         color: #ffffff;}
-    nav li a:hover, nav li a.current {
+    section li a:hover, nav li a.current {
         color: #000000;}
     section.courses {
         float: left;
@@ -327,66 +391,10 @@
     footer {
         font-size: 80%;
         padding: 7px 0px 0px 20px;}
+    p {
+        font-size: 90%;
+    }
 </style>
-
-<header>
-    <nav>
-        <ul>
-            <li><a href="https://www.nopech.cn" target="_blank" rel="noopener" class="current">HOME</a></li>
-            <li><a href="https://nopech.cn/about/" target="_blank" rel="noopener">ABOUT ME</a></li>
-            <li><a href="https://nopech.cn/tags/" target="_blank" rel="noopener">TAGS</a></li>
-            <li><a href="https://nopech.cn/categories/" target="_blank" rel="noopener">CATEGORIES</a></li>
-            <li><a href="https://nopech.cn/archives/" target="_blank" rel="noopener">ARCHIVES</a></li>
-                    <li><a href="mailto:1206805300@qq.com">DATES ME</a></li>
-        </ul>
-    </nav>
-</header>
-<section class="courses">
-    <article>
-        <figure>
-            <img src="/img/xzqsy.jpg" alt="xiazhiqiu shiyu" />
-        </figure>
-        <hgroup>
-            <h2>Chit Chat</h2>
-            <h3>You build it, You run it.</h3>
-        </hgroup>
-        <p>Don't worry about your program's being abnormal. If it always runs correctly, we may have made a make a great achievement already.</p>
-    </article>    
-    <article>
-        <figure>
-            <img src="/img/night.jpg" alt="pleasant picture" />
-        </figure>
-        <hgroup>
-            <h2>Go Big or Go Home</h2>
-            <h3>Stay hungry, stay foolish</h3>
-        </hgroup>
-        <p>Maybe sometimes, the bad thing is that you dare not modify a block of code. But the worse thing is that you wrote the code yourself.</p>
-    </article>    
-</section>
-<aside>
-    <section class="popular-recipes">
-        <h2>Includes</h2>
-        <a href="https://github.com/Nopeful/" target="_blank" rel="noopener">GitHub Link</a>
-        <a href="https://twitter.com/Nope98687797" target="_blank" rel="noopener">Twitter Link</a>
-        <a href="mailto:nopeyeply@gamil.com">GMail Link</a>
-        <a href="mailto:1206805300@qq.com">QQ Mail Link</a>
-        <br>
-        <br>
-        <br>
-        <br>
-    </section>
-    <section class="contact-details">
-        <h2>Contact</h2>
-        <p>Chit Chat<br />
-            Core Java Volume<br />
-            Algorithm<br />
-            HTML-CSS-JavaScript</p>
-    </section>
-</aside>
-<footer>
-    &copy; 2020 Noch's Blog
-</footer>
-
       </div>
       
       
@@ -465,19 +473,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
         <span class="site-state-item-count">33</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -536,13 +546,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">104k</span>
+    <span title="站点总字数">116k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:35</span>
+    <span title="站点阅读时长">1:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
   </div>
