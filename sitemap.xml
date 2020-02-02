@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2020/02/01/Java-%E6%B5%81/</loc>
+    <loc>http://yoursite.com/2020/02/02/Java-%E6%B5%81%EF%BC%88%E4%BA%8C%EF%BC%89/</loc>
     
-    <lastmod>2020-02-01T14:59:53.446Z</lastmod>
+    <lastmod>2020-02-02T09:59:53.915Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/02/01/Java-%E6%B5%81%EF%BC%88%E4%B8%80%EF%BC%89/</loc>
+    
+    <lastmod>2020-02-01T15:06:35.615Z</lastmod>
     
   </url>
   

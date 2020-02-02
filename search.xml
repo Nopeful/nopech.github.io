@@ -1,8 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Java-流</title>
-    <url>/2020/02/01/Java-%E6%B5%81/</url>
+    <title>Java-流（二）</title>
+    <url>/2020/02/02/Java-%E6%B5%81%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="收集结果"><a href="#收集结果" class="headerlink" title="收集结果"></a>收集结果</h1><p>处理完流之后，通常会想要查看其元素，此时可以调用<code>iterator()</code>方法，它会产生可以用来访问元素的旧时风格的迭代器</p>
+<p>或者，可以用<code>forEach()</code>方法，将某函数应用于每一个元素</p>
+<p>在并行流上，<code>forEach()</code>方法会以任意顺序遍历各个元素，如果想要按照流中的顺序来处理元素，可以用<code>forEachOrdered()</code>方法，不过这个方法会丧失并行处理的优势</p>
+<p>有时，我们也会想把结果收集到数据结构中，可以用<code>toArray()</code>方法获得由流的元素构成的数组<br>不过因为无法在运行时创建泛型数组，<code>toArray()</code>方法会返回一个<code>Object[]</code>数组，如果想要让数组拥有正确的类型，可以传递数组构造器</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String result[] = stream.toArray(String[]::<span class="keyword">new</span>);</span><br></pre></td></tr></table></figure>
+
+<p>针对将流中的元素收集到另一个目标中，可以用<code>collect()</code>方法，它会接受一个<code>Collevtor</code>接口的实例，<code>Collectors</code>类提供了大量用于生成公共收集器的工厂方法</p>
+<h2 id="一些简单收集结果的用法"><a href="#一些简单收集结果的用法" class="headerlink" title="一些简单收集结果的用法"></a>一些简单收集结果的用法</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将流收集到列表中</span></span><br><span class="line">List&lt;String&gt; result = stream.collect(Collectors.toList());</span><br><span class="line"><span class="comment">// 将流收集到集合中</span></span><br><span class="line">Set&lt;String&gt; result2 = stream.collect(Collectors.toSet());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 控制获得的集合的种类</span></span><br><span class="line">TreeSet&lt;String&gt; result3 = stream.collect(Collectors.toCollection(TreeSet::<span class="keyword">new</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过连接操作来收集流中的所有字符串</span></span><br><span class="line">String result4 = stream.collect(Collectors.joining());</span><br><span class="line"><span class="comment">// 在元素之间添加分隔符</span></span><br><span class="line">String result5 = stream.collect(Collectors.joining(<span class="string">", "</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果流中包含除字符串以外的其他对象，我们需要现将其转换为字符串</span></span><br><span class="line">String result6 = stream.map(Object::toString).collect(Collectors.joining(<span class="string">", "</span>));</span><br></pre></td></tr></table></figure>
+
+<p>如果想要将流的结果约简为总和、平均值、最大或最小值，可以用<code>summarizing[Int|Long|Double]</code>方法中的某一个，这些方法会接受一个将流对象映射为数据的函数，同时产生类型为<code>[Int|Long|Double]SummaryStatistics</code>对象的结果，同时计算总和、平均值、最大或最小值</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">IntSummaryStatistics summary = stream.collect(Collectors.summarizingInt(String::length));</span><br><span class="line"><span class="keyword">double</span> averageWordLength = summary.getAverage();</span><br><span class="line"><span class="keyword">double</span> maxWordLength = summary.getMax();</span><br></pre></td></tr></table></figure>
+
+<h2 id="API-java-util-stream-Stream"><a href="#API-java-util-stream-Stream" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h2><ul>
+<li><code>void forEach(Consumer&lt;? super T&gt; action);</code></li>
+<li><code>Object[] toArray();</code></li>
+<li><code>&lt;A&gt; A[] toArray(IntFunction&lt;A[]&gt; generator);</code></li>
+<li><code>&lt;R, A&gt; R collect(Collector&lt;? super T, A, R&gt; collector);</code></li>
+</ul>
+<h2 id="API-java-util-stream-Collectors"><a href="#API-java-util-stream-Collectors" class="headerlink" title="API java.util.stream.Collectors"></a>API <code>java.util.stream.Collectors</code></h2><ul>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, List&lt;T&gt;&gt; toList()</code></li>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, Set&lt;T&gt;&gt; toSet()</code></li>
+<li><code>public static &lt;T, C extends Collection&lt;T&gt;&gt; Collector&lt;T, ?, C&gt; toCollection(Supplier&lt;C&gt; collectionFactory)</code><br>将元素收集到任意集合中的收集器，可以传入构造器引用</li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining()</code></li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining(CharSequence delimiter)</code></li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining(CharSequence delimiter, CharSequence prefix, CharSequence suffix)</code><br>产生一个连接字符串的收集器，分隔符会置于字符串之间，且第一个字符串可以有前缀，最后一个可以有后缀</li>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, Integer&gt; summingInt|Long|Double(ToIntFunction&lt;? super T&gt; mapper)</code></li>
+</ul>
+<h2 id="API-java-util-Int-Long-DoubleSummaryStatistics"><a href="#API-java-util-Int-Long-DoubleSummaryStatistics" class="headerlink" title="API java.util.Int|Long|DoubleSummaryStatistics"></a>API <code>java.util.Int|Long|DoubleSummaryStatistics</code></h2><ul>
+<li><code>public final long getCount()</code><br>产生汇总后的元素个数</li>
+<li><code>public final long|double getSum()</code></li>
+<li><code>public final double getAverage()</code><br>产生汇总后的元素的总和或平均值，没有任何元素时返回0</li>
+<li><code>public final int|long|double getMin()</code></li>
+<li><code>public final int|long|double getMax()</code><br>产生汇总后的元素的最大值或最小值，没有任何元素时，产生<code>Integer|Long|Double.MAX|MIN_VALUE</code></li>
+</ul>
+<h1 id="收集到映射表，群组与分区、下游收集器"><a href="#收集到映射表，群组与分区、下游收集器" class="headerlink" title="收集到映射表，群组与分区、下游收集器"></a>收集到映射表，群组与分区、下游收集器</h1><h2 id="示例-1"><a href="#示例-1" class="headerlink" title="示例 1"></a>示例 1</h2><p>首先，再主类中定义一个静态内部类<code>Person</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略 getter and setter</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getClass().getName() + <span class="string">"[id="</span> + id + <span class="string">",name="</span> + name + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再定义一个静态方法<code>perple()</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Stream&lt;Person&gt; <span class="title">people</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Stream.of(<span class="keyword">new</span> Person(<span class="number">1001</span>, <span class="string">"Peter"</span>), </span><br><span class="line">            <span class="keyword">new</span> Person(<span class="number">1002</span>, <span class="string">"Paul"</span>),</span><br><span class="line">            <span class="keyword">new</span> Person(<span class="number">1003</span>, <span class="string">"Mary"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果有一个<code>Stream&lt;Person&gt;</code>对象，想要将其元素收集到一个映射表中，后续就可以通过<code>ID</code>查找人员</p>
+<p><code>Collectors.toMap()</code>方法有有很多重载形式，其中一个两个引元，用来产生映射表的键和值，例如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, String&gt; idToName = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Person::getName));</span><br><span class="line">System.out.println(<span class="string">"idToName: "</span> + idToName);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">idToName: &#123;<span class="number">1001</span>=Peter, <span class="number">1002</span>=Paul, <span class="number">1003</span>=Mary&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常情况下，值应该是实际的元素，第二个函数就可以使用<code>Function.identity()</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, Person&gt; idToPerson = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Function.identity()));</span><br><span class="line">System.out.println(<span class="string">"idToPerson: "</span> + idToPerson.getClass().getName() + idToPerson);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">idToPerson: java.util.HashMap</span><br><span class="line">&#123;<span class="number">1001</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1001</span>,name=Peter],</span><br><span class="line"> <span class="number">1002</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1002</span>,name=Paul],</span><br><span class="line"> <span class="number">1003</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1003</span>,name=Mary]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果有多个元素具有相同的键，就会存在冲突，收集器会抛出<code>IllegalStateExecption</code>异常</p>
+<p>可以通过<code>toMap</code>方法的第三个函数引元来覆盖行为，该函数会针对给定的已有值和新值来解决冲突并决定键对应的值，示例代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">idToPerson = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Function.identity(), </span><br><span class="line">            (exisitingValue, newValue) -&gt; &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">            &#125;, TreeMap::<span class="keyword">new</span>)</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"idToPerson: "</span> + idToPerson.getClass().getName() + idToPerson);</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="示例-2"><a href="#示例-2" class="headerlink" title="示例 2"></a>示例 2</h2><p>首先，我们构建一个映射表，存储所有可用<code>Locale</code>中的每种语言<br>它以默认<code>Locale</code>类中的名字（如<code>&quot;German&quot;</code>）为键，以其本地化的名字（如<code>&quot;Deutsch&quot;</code>）为值</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Stream&lt;Locale&gt; locales = Stream.of(Locale.getAvailableLocales());</span><br><span class="line">Map&lt;String, String&gt; languageNames = locales.collect(</span><br><span class="line">        Collectors.toMap(</span><br><span class="line">                Locale::getDisplayLanguage,</span><br><span class="line">                l -&gt; l.getDisplayLanguage(l),</span><br><span class="line">                (existingValue, newValue) -&gt; existingValue)</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"languagesNames: "</span> + languageNames);</span><br></pre></td></tr></table></figure>
+
+<p>我们不用关心同一种语言是否可能出现两次，只要记录第一项就好，部分输出如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">languagesNames: &#123;旺杜语=ewondo, 乌兹别克语=o‘zbek, =, 桑布鲁语=Kisampur, </span><br><span class="line">爪哇语=Jawa, 宿务语=Cebuano, 隆迪语=Ikirundi, 索加语=Olusoga, 克罗地亚语=hrvatski, </span><br><span class="line">尼昂科勒语=Runyankore, 亚美尼亚语=հայերեն, 瑞士德语=Schwiizertüütsch, ...</span><br></pre></td></tr></table></figure>
+
+<p>现在，假设我们需要了解给定国家的所有语言，就需要一个<code>Map&lt;String, Set&lt;String&gt;&gt;</code>对象，例如，<code>&quot;Switzerland&quot;</code>的值是集合<code>[French, German, Italian]</code></p>
+<p>首先，为每种语言都存储一个单例集，无论何时，只要找到了给定国家的新语言，都将已有集合和新集合做并集操作</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Stream&lt;Locale&gt; locales = Stream.of(Locale.getAvailableLocales());</span><br><span class="line">Map&lt;String, Set&lt;String&gt;&gt; countryLanguageSets = locales.collect(</span><br><span class="line">        Collectors.toMap(</span><br><span class="line">                Locale::getDisplayCountry,</span><br><span class="line">                l -&gt; Collections.singleton(l.getDisplayLanguage()),</span><br><span class="line">                (a, b) -&gt; &#123; <span class="comment">// union of a and b</span></span><br><span class="line">                    Set&lt;String&gt; union = <span class="keyword">new</span> HashSet&lt;&gt;(a);</span><br><span class="line">                    union.addAll(b);</span><br><span class="line">                    <span class="keyword">return</span> union;</span><br><span class="line">                &#125;</span><br><span class="line">        )</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"countryLanguageSets: "</span> + countryLanguageSets);</span><br></pre></td></tr></table></figure>
+
+<p>展示部分输出</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">countryLanguageSets: &#123;巴西=[西班牙语, 葡萄牙语], </span><br><span class="line">中国=[中文, 四川彝语, 粤语, 维吾尔语, 藏语], 澳大利亚=[英语], 蒙古=[蒙古语], </span><br><span class="line">佛得角=[卡布佛得鲁语, 葡萄牙语], 台湾=[中文], 萨摩亚=[英语], ...</span><br></pre></td></tr></table></figure>
+
+<h2 id="API-java-util-stream-Collectors-1"><a href="#API-java-util-stream-Collectors-1" class="headerlink" title="API java.util.stream.Collectors"></a>API <code>java.util.stream.Collectors</code></h2><ul>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, Map&lt;K,U&gt;&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, Map&lt;K,U&gt;&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                                BinaryOperator&lt;U&gt; mergeFunction)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, M&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                        Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                        BinaryOperator&lt;U&gt; mergeFunction,</span><br><span class="line">                        Supplier&lt;M&gt; mapFactory)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends ConcurrentMap&lt;K, U&gt;&gt;</span><br><span class="line">    Collector&lt;T, ?, M&gt; toConcurrentMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                    Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                                    BinaryOperator&lt;U&gt; mergeFunction,</span><br><span class="line">                                    Supplier&lt;M&gt; mapFactory)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，会产生一个映射表或者并发映射表</p>
+<p><code>keyMapper</code>和<code>valueMapper</code>会产生一个键值对，默认情况下，键相同会抛出<code>IllegalStateExecption</code>异常，可用提供一个<code>mergeFunction</code>来合并具有相同键的值</p>
+<p>默认情况下，结果是一个<code>HashMap</code>或者<code>ConcurrentHashMap</code>对象，可用提供一个<code>mapFactory</code>，来产生期望的映射表实例</p>
+<h2 id="群组与分区"><a href="#群组与分区" class="headerlink" title="群组与分区"></a>群组与分区</h2><p>刚刚展示了如何收集给定国家的所有语言，但处理过程有些冗长，必须为每个映射表的值生成单例集合，然后指定如何合并现有集合和新集合</p>
+<p>将具有相同特性的值群聚成组，可用用<code>groupingBy()</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String, List&lt;Locale&gt;&gt; countryToLocale = locales.collect(</span><br><span class="line">        Collectors.groupingBy(Locale::getCountry)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><code>Locale::getCountry</code>是群组的分类函数</p>
+<p>现在，可用查找给定国家代码对应的地点了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Locale&gt; chinaLocales = countryToLocale.get(<span class="string">"CN"</span>);</span><br><span class="line">chinaLocales.forEach(s -&gt; System.out.print(s + <span class="string">"  "</span>));</span><br><span class="line"><span class="comment">// Yield locales [yue_CN_#Hans  zh_CN  zh_CN_#Hans  ug_CN  bo_CN  ii_CN]</span></span><br></pre></td></tr></table></figure>
+
+
+<p>当分类函数是断言函数时，流的元素可以区分为两个列表：该函数返回<code>ture</code>的元素和其他元素</p>
+<p>这种情况下，使用<code>partitioningBy()</code>就比<code>groupingBy()</code>高效</p>
+<p>下面的例子，将所有<code>Locale</code>对象分成了使用用于和使用所有其他语言的两类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Boolean, List&lt;Locale&gt;&gt; englishAndOtherLocales = locales.collect(</span><br><span class="line">        Collectors.partitioningBy(l -&gt; l.getLanguage().equals(<span class="string">"en"</span>))</span><br><span class="line">);</span><br><span class="line">englishAndOtherLocales.forEach((k, v) -&gt; System.out.println(k + <span class="string">": "</span> + v));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">false: [, nds, ti_ET, ta_SG, lv, zh_SG_#Hans, ...</span><br><span class="line"><span class="keyword">true</span>: [en_NU, en_JM, en_LR, en_PW, en_US_POSIX, ...</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="API"><a href="#API" class="headerlink" title="API ``"></a>API ``</h3><ul>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ?, Map&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    groupingBy(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ?, ConcurrentMap&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    groupingByConcurrent(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，它会产生一个映射表或者并发映射表，其键是将<code>classifier</code>应用于所有收集到的元素上所产生的结果，而值是由具有相同键的元素构成的列表</p>
+<ul>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ?, Map&lt;Boolean, List&lt;T&gt;&gt;&gt; </span><br><span class="line">    partitioningBy(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，他会产生一个映射表，其键是<code>true/false</code>，而值是由满足/不满足断言的元素构成的列表</p>
+<h2 id="下游收集器"><a href="#下游收集器" class="headerlink" title="下游收集器"></a>下游收集器</h2><p><code>groupingBy()</code>方法产生的映射表，每个值都是一个列表，若想要处理列表，就要提供一个“下游收集器”</p>
+<p>例如，想要获得集合而非列表，就可以用之前提到的<code>Collectors.toSet()</code>方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String, Set&lt;Locale&gt;&gt; countryToLocaleSet = locales.collect(</span><br><span class="line">        Collectors.groupingBy(Locale::getCountry, Collectors.toSet())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="API-1"><a href="#API-1" class="headerlink" title="API"></a>API</h3><p>Java 提供了多种可用将群组元素约简为数字的收集器，这里简单列举几个API</p>
+<ul>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Long&gt; counting()</code><br>产生一个可以对收集到的元素进行计数的计数器</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ?, Integer&gt;</span><br><span class="line">    summingInt|Long|Double</span><br><span class="line">        (ToInt|Long|DoubleFunction&lt;? <span class="keyword">super</span> T&gt; mapper)</span><br></pre></td></tr></table></figure>
+<p>  产生一个收集器，计算总和</p>
+</li>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Optional&lt;T&gt;&gt; minBy(Comparator&lt;? super T&gt; comparator)</code></p>
+</li>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Optional&lt;T&gt;&gt; maxBy(Comparator&lt;? super T&gt; comparator)</code><br>产生一个收集器，收集最大/最小值</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U, A, R&gt; Collector&lt;T, ?, R&gt; </span><br><span class="line">    mapping(Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; mapper,</span><br><span class="line">            Collector&lt;? <span class="keyword">super</span> U, A, R&gt; downstream)</span><br></pre></td></tr></table></figure>
+<p>  产生一个收集器，它会产生一个映射表，其键时将<code>mapper</code>应用到收集到的数据上而产生的，其值是使用<code>downstream</code>收集器收集到的具有相同键的元素</p>
+</li>
+</ul>
+<h1 id="约简操作"><a href="#约简操作" class="headerlink" title="约简操作"></a>约简操作</h1><h2 id="reduce方法"><a href="#reduce方法" class="headerlink" title="reduce方法"></a><code>reduce</code>方法</h2><p><code>reduce()</code>方法是一种用于流中计算某个值得通用机制，有多种重载形式</p>
+<h3 id="API-java-util-stream-Stream-1"><a href="#API-java-util-stream-Stream-1" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h3><ul>
+<li>Optional<T> reduce(BinaryOperator<T> accumulator);</li>
+<li>T reduce(T identity, BinaryOperator<T> accumulator);</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&lt;U&gt; <span class="function">U <span class="title">reduce</span><span class="params">(U identity,</span></span></span><br><span class="line"><span class="function"><span class="params">            BiFunction&lt;U, ? <span class="keyword">super</span> T, U&gt; accumulator,</span></span></span><br><span class="line"><span class="function"><span class="params">            BinaryOperator&lt;U&gt; combiner)</span></span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>用给定得<code>accumulator</code>函数产生流中元素的累积总和<br>如果提供了单位元（<em>Identity Element</em>，也叫幺元），那么第一个被累计的元素就是该单位元<br>如果提供了组合器，那么它可以用来将分别累积的各个部分整合成总和</p>
+<h2 id="collect方法"><a href="#collect方法" class="headerlink" title="collect方法"></a><code>collect</code>方法</h2><p>有时<code>reduce</code>并不够通用，例如，想要收集<code>BitSet</code>中的结果，若收集操作时并行的，那么就不能直接将元素放在单个<code>BitSet</code>对象中，因为其不是线程安全的</p>
+<p>每个部分都要以其自己的空集开始，此时就该使用<code>collect</code>，它会接受单个引元<br>1）一个<code>Supplier&lt;R&gt;</code>对象，可以创建目标类型的新实例<br>2）一个<code>BiConsumer&lt;R, ? super T&gt;</code>对象，可以将一个元素添加到一个实例上<br>3）一个<code>BiConsumer&lt;R, R&gt;</code>对象，可以将两个实例合并成一个</p>
+<p>简单举个<code>collect</code>方法操作位集的例子</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BitSet result = stream.collect(BitSet::<span class="keyword">new</span>, BitSet::set, BitSet::or);</span><br></pre></td></tr></table></figure>
+
+<h3 id="API-java-util-stream-Stream-2"><a href="#API-java-util-stream-Stream-2" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&lt;R&gt; <span class="function">R <span class="title">collect</span><span class="params">(Supplier&lt;R&gt; supplier,</span></span></span><br><span class="line"><span class="function"><span class="params">              BiConsumer&lt;R, ? <span class="keyword">super</span> T&gt; accumulator,</span></span></span><br><span class="line"><span class="function"><span class="params">              BiConsumer&lt;R, R&gt; combiner)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>将元素收集到类型<code>R</code>的结果中<br>在每个部分上，都会调用<code>supplier</code>来提供初始结果，调用<code>accumulator</code>来交替的将元素添加到结果中，并调用<code>combiner</code>来整合两个结果</p>
+<h1 id="基本类型流"><a href="#基本类型流" class="headerlink" title="基本类型流"></a>基本类型流</h1><p>流库中提供了专门的类型<code>IntStream</code>, <code>LongStream</code>, <code>DoubleStream</code>，用来直接存储基本类型值，无需使用包装器<br>如果想要存储<code>short</code>, <code>char</code>, <code>byte</code>, <code>boolean</code>，可以直接使用<code>IntStream</code><br>对于<code>float</code>，可以使用<code>DoubleStream</code></p>
+<p>详情可以参照API ，里面提供了丰富的方法</p>
+<ul>
+<li><code>java.util.stream.IntStream</code></li>
+<li><code>java.util.stream.LongStream</code></li>
+<li><code>java.util.stream.DoubleStream</code></li>
+</ul>
+<h1 id="并行流"><a href="#并行流" class="headerlink" title="并行流"></a>并行流</h1><p>流使得并行处理块操作变得很容易，这个过程几乎是自动的</p>
+<h2 id="创建并行流"><a href="#创建并行流" class="headerlink" title="创建并行流"></a>创建并行流</h2><p>利用<code>Collection&lt;E&gt;</code>接口的<code>parallelStream()</code>方法从任意集合中获取一个并行流</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; words = ...;</span><br><span class="line"></span><br><span class="line">Stream&lt;String&gt; parallelWords = words.parallelStream();</span><br></pre></td></tr></table></figure>
+
+<p><code>parallel()</code>方法可以将任意的顺序流转换为并行流</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] wordArray = &#123;...&#125;;</span><br><span class="line"></span><br><span class="line">Stream&lt;String&gt; parallelWords2 = Stream.of(wordArray).parallel();</span><br></pre></td></tr></table></figure>
+
+<p>只要在终结方法执行时，流处于并行模式，那么所有的中间流操作都将被并行化</p>
+<p>当流操作并行运行时，目标是要让其返回结果与顺序执行时的返回结果相同，重要的是，这些操作可以以任意顺序执行</p>
+<p>例如，想要对字符串流中的所有短单词计数，我们需要确保传递给并行流操作的任何函数都可以安全并行执行</p>
+<p>如果用长度将字符串群组，然后分别对它们进行计数，那么就可以安全并行化这项计算</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, Long&gt; shortWordCounts = words.parallelStream()</span><br><span class="line">        .filter(s -&gt; s.length() &lt; <span class="number">10</span>)</span><br><span class="line">        .collect(Collectors.groupingBy(</span><br><span class="line">                String::length,</span><br><span class="line">                Collectors.counting()</span><br><span class="line">        ));</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>，传递给并行流操作的函数不应该被堵塞</p>
+<p>默认情况下，从有序集合（数组和列表）、生成器和迭代产生的流，或通过调用<code>Stream.sorted</code>产生的流，都是有序的，排序并不排斥高效的并行处理</p>
+<p>通过在流上调用<code>unsorted</code>方法，就可以明确表示我们对排序不感兴趣</p>
+<p>之前讨论过，合并映射表的代价很高，不过<code>Collectors.groupByConcurrent</code>方法使用了共享的并发映射表，为从并行化中受益，映射表中的值顺序不会与流中的顺序相同</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, List&lt;String&gt;&gt; result = words.parallelStream().collect(</span><br><span class="line">        Collectors.groupingByConcurrent(String::length)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果使用独立于排序的下游收集器，就不用太在意了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, Long&gt; wordCounts = words.parallelStream()</span><br><span class="line">        .collect(</span><br><span class="line">                Collectors.groupingByConcurrent(</span><br><span class="line">                        String::length,</span><br><span class="line">                        Collectors.counting()</span><br><span class="line">                )</span><br><span class="line">        );</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：不要修改在执行某项流操作后将元素返回到流中的集合，因为流不会收集它们的数据，数据总是在单独的集合中。如果修改了这样的集合，那么流操作的结果就是未定义的</p>
+<p>为了让并行流正常工作，需要满足许多条件：</p>
+<ul>
+<li>数据应该在内存中</li>
+<li>流应该可以被高效地分成若干个字部份</li>
+<li>流操作的工作量应该具有较大的规模</li>
+<li>流操作不应该被阻塞</li>
+</ul>
+<p><strong>总之，不要将所有流操作都转换为并行流，只有在对已经位于内存中的数据执行大量计算操作时，才应该使用并行流</strong></p>
+<h2 id="API-java-util-stream-BaseStream-lt-T-S-extends-BaseStream-lt-T-S-gt-gt-接口"><a href="#API-java-util-stream-BaseStream-lt-T-S-extends-BaseStream-lt-T-S-gt-gt-接口" class="headerlink" title="API java.util.stream.BaseStream&lt;T, S extends BaseStream&lt;T, S&gt;&gt;接口"></a>API <code>java.util.stream.BaseStream&lt;T, S extends BaseStream&lt;T, S&gt;&gt;</code>接口</h2><ul>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">S <span class="title">parallel</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>  产生一个与当前流中元素相同的并行流</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">S <span class="title">unordered</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>  产生一个与当前流中元素相同的无序流</p>
+</li>
+</ul>
+<h2 id="API-java-util-Collection-lt-E-gt-接口"><a href="#API-java-util-Collection-lt-E-gt-接口" class="headerlink" title="API java.util.Collection&lt;E&gt;接口"></a>API <code>java.util.Collection&lt;E&gt;</code>接口</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">default</span> Stream&lt;E&gt; <span class="title">parallelStream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用当前集合中的元素产生一个并行流</p>
+<h2 id="最后附上应该并行流的示例"><a href="#最后附上应该并行流的示例" class="headerlink" title="最后附上应该并行流的示例"></a>最后附上应该并行流的示例</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ParallelStreams</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String contents = <span class="keyword">new</span> String(Files.readAllBytes(</span><br><span class="line">                Paths.get(<span class="string">"...\\microservice.txt"</span>)),</span><br><span class="line">                StandardCharsets.UTF_8);</span><br><span class="line">        List&lt;String&gt; wordList = Arrays.asList(contents.split(<span class="string">"\\PL+"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Group and count</span></span><br><span class="line">        Map&lt;Integer, Long&gt; shortWordCounts = wordList.parallelStream()</span><br><span class="line">                .filter(s -&gt; s.length() &lt; <span class="number">10</span>)</span><br><span class="line">                .collect(Collectors.groupingBy(String::length, Collectors.counting()));</span><br><span class="line">        System.out.println(<span class="string">"shortWordCounts: "</span> + shortWordCounts);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Downstream order not deterministic</span></span><br><span class="line">        Map&lt;Integer, List&lt;String&gt;&gt; result = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length)</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"length(13): "</span> + result.get(<span class="number">13</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// for comparing</span></span><br><span class="line">        result = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length)</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"length(13): "</span> + result.get(<span class="number">13</span>));</span><br><span class="line"></span><br><span class="line">        Map&lt;Integer, Long&gt; wordCounts = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length, Collectors.counting())</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"wordCounts: "</span> + wordCounts);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">shortWordCounts: &#123;<span class="number">0</span>=<span class="number">1</span>, <span class="number">1</span>=<span class="number">33</span>, <span class="number">2</span>=<span class="number">99</span>, <span class="number">3</span>=<span class="number">94</span>, <span class="number">4</span>=<span class="number">94</span>, <span class="number">5</span>=<span class="number">48</span>, <span class="number">6</span>=<span class="number">47</span>, <span class="number">7</span>=<span class="number">42</span>, <span class="number">8</span>=<span class="number">51</span>, <span class="number">9</span>=<span class="number">17</span>&#125;</span><br><span class="line">length(<span class="number">13</span>): [architectural, communicating, architectural, independently, independently, Microservices]</span><br><span class="line">length(<span class="number">13</span>): [architectural, architectural, Microservices, communicating, independently, independently]</span><br><span class="line">wordCounts: &#123;<span class="number">0</span>=<span class="number">1</span>, <span class="number">1</span>=<span class="number">33</span>, <span class="number">2</span>=<span class="number">99</span>, <span class="number">3</span>=<span class="number">94</span>, <span class="number">4</span>=<span class="number">94</span>, <span class="number">5</span>=<span class="number">48</span>, <span class="number">6</span>=<span class="number">47</span>, <span class="number">7</span>=<span class="number">42</span>, <span class="number">8</span>=<span class="number">51</span>, <span class="number">9</span>=<span class="number">17</span>, <span class="number">10</span>=<span class="number">27</span>, <span class="number">11</span>=<span class="number">17</span>, <span class="number">12</span>=<span class="number">21</span>, <span class="number">13</span>=<span class="number">6</span>&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Java流</category>
+      </categories>
+      <tags>
+        <tag>Java类-Stream</tag>
+        <tag>Java类-Collectors</tag>
+        <tag>并行流</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java-流（一）</title>
+    <url>/2020/02/01/Java-%E6%B5%81%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<h1 id="流的创建"><a href="#流的创建" class="headerlink" title="流的创建"></a>流的创建</h1><h2 id="将集合转换为流"><a href="#将集合转换为流" class="headerlink" title="将集合转换为流"></a>将集合转换为流</h2><p><code>Collection</code>接口的<code>stream()</code>方法可以将任意一个集合转化为一个流</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String contents = <span class="keyword">new</span> String(Files.readAllBytes(</span><br><span class="line">                Paths.get(<span class="string">"../microservice.txt"</span>)), StandardCharsets.UTF_8);</span><br><span class="line">List&lt;String&gt; list = Arrays.asList(contents.split(<span class="string">"\\PL+"</span>));</span><br><span class="line">list.stream().filter(s -&gt; s.length() &gt; <span class="number">12</span>).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
 
@@ -165,6 +378,10 @@
       <categories>
         <category>Java流</category>
       </categories>
+      <tags>
+        <tag>Java类-Stream</tag>
+        <tag>Java类-Optional</tag>
+      </tags>
   </entry>
   <entry>
     <title>LeetCode算法经典题集（一）</title>

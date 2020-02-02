@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="iu-ykheNwy2kfIqgo-3ZSczJ1NJ1oDbvYaCmUSTXZuE">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="Java流学习笔记（二），包括结果收集、收集于映射表、群组与分区、下游收集器、约简操作、基本类型流、并行流等知识点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java-流（二）">
+<meta property="og:url" content="http://yoursite.com/2020/02/02/Java-%E6%B5%81%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Nopech&#39;s Blog">
+<meta property="og:description" content="Java流学习笔记（二），包括结果收集、收集于映射表、群组与分区、下游收集器、约简操作、基本类型流、并行流等知识点">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-02T09:55:24.000Z">
+<meta property="article:modified_time" content="2020-02-02T09:59:53.915Z">
+<meta property="article:author" content="Nopech">
+<meta property="article:tag" content="Java类-Stream">
+<meta property="article:tag" content="Java类-Collectors">
+<meta property="article:tag" content="并行流">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/02/Java-%E6%B5%81%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Java-流（二） | Nopech's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nopech's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">37</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-outlook">
+
+    <a href="/mypage/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>总览</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Nopeful" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/02/Java-%E6%B5%81%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/myavatar.png">
+      <meta itemprop="name" content="Nopech">
+      <meta itemprop="description" content="Thinking and coding.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nopech's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java-流（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-02 17:55:24 / 修改时间：17:59:53" itemprop="dateCreated datePublished" datetime="2020-02-02T17:55:24+08:00">2020-02-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E6%B5%81/" itemprop="url" rel="index">
+                    <span itemprop="name">Java流</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+            <div class="post-description">Java流学习笔记（二），包括结果收集、收集于映射表、群组与分区、下游收集器、约简操作、基本类型流、并行流等知识点</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="收集结果"><a href="#收集结果" class="headerlink" title="收集结果"></a>收集结果</h1><p>处理完流之后，通常会想要查看其元素，此时可以调用<code>iterator()</code>方法，它会产生可以用来访问元素的旧时风格的迭代器</p>
+<p>或者，可以用<code>forEach()</code>方法，将某函数应用于每一个元素</p>
+<p>在并行流上，<code>forEach()</code>方法会以任意顺序遍历各个元素，如果想要按照流中的顺序来处理元素，可以用<code>forEachOrdered()</code>方法，不过这个方法会丧失并行处理的优势</p>
+<p>有时，我们也会想把结果收集到数据结构中，可以用<code>toArray()</code>方法获得由流的元素构成的数组<br>不过因为无法在运行时创建泛型数组，<code>toArray()</code>方法会返回一个<code>Object[]</code>数组，如果想要让数组拥有正确的类型，可以传递数组构造器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String result[] = stream.toArray(String[]::<span class="keyword">new</span>);</span><br></pre></td></tr></table></figure>
+
+<p>针对将流中的元素收集到另一个目标中，可以用<code>collect()</code>方法，它会接受一个<code>Collevtor</code>接口的实例，<code>Collectors</code>类提供了大量用于生成公共收集器的工厂方法</p>
+<h2 id="一些简单收集结果的用法"><a href="#一些简单收集结果的用法" class="headerlink" title="一些简单收集结果的用法"></a>一些简单收集结果的用法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将流收集到列表中</span></span><br><span class="line">List&lt;String&gt; result = stream.collect(Collectors.toList());</span><br><span class="line"><span class="comment">// 将流收集到集合中</span></span><br><span class="line">Set&lt;String&gt; result2 = stream.collect(Collectors.toSet());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 控制获得的集合的种类</span></span><br><span class="line">TreeSet&lt;String&gt; result3 = stream.collect(Collectors.toCollection(TreeSet::<span class="keyword">new</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过连接操作来收集流中的所有字符串</span></span><br><span class="line">String result4 = stream.collect(Collectors.joining());</span><br><span class="line"><span class="comment">// 在元素之间添加分隔符</span></span><br><span class="line">String result5 = stream.collect(Collectors.joining(<span class="string">", "</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果流中包含除字符串以外的其他对象，我们需要现将其转换为字符串</span></span><br><span class="line">String result6 = stream.map(Object::toString).collect(Collectors.joining(<span class="string">", "</span>));</span><br></pre></td></tr></table></figure>
+
+<p>如果想要将流的结果约简为总和、平均值、最大或最小值，可以用<code>summarizing[Int|Long|Double]</code>方法中的某一个，这些方法会接受一个将流对象映射为数据的函数，同时产生类型为<code>[Int|Long|Double]SummaryStatistics</code>对象的结果，同时计算总和、平均值、最大或最小值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IntSummaryStatistics summary = stream.collect(Collectors.summarizingInt(String::length));</span><br><span class="line"><span class="keyword">double</span> averageWordLength = summary.getAverage();</span><br><span class="line"><span class="keyword">double</span> maxWordLength = summary.getMax();</span><br></pre></td></tr></table></figure>
+
+<h2 id="API-java-util-stream-Stream"><a href="#API-java-util-stream-Stream" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h2><ul>
+<li><code>void forEach(Consumer&lt;? super T&gt; action);</code></li>
+<li><code>Object[] toArray();</code></li>
+<li><code>&lt;A&gt; A[] toArray(IntFunction&lt;A[]&gt; generator);</code></li>
+<li><code>&lt;R, A&gt; R collect(Collector&lt;? super T, A, R&gt; collector);</code></li>
+</ul>
+<h2 id="API-java-util-stream-Collectors"><a href="#API-java-util-stream-Collectors" class="headerlink" title="API java.util.stream.Collectors"></a>API <code>java.util.stream.Collectors</code></h2><ul>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, List&lt;T&gt;&gt; toList()</code></li>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, Set&lt;T&gt;&gt; toSet()</code></li>
+<li><code>public static &lt;T, C extends Collection&lt;T&gt;&gt; Collector&lt;T, ?, C&gt; toCollection(Supplier&lt;C&gt; collectionFactory)</code><br>将元素收集到任意集合中的收集器，可以传入构造器引用</li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining()</code></li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining(CharSequence delimiter)</code></li>
+<li><code>public static Collector&lt;CharSequence, ?, String&gt; joining(CharSequence delimiter, CharSequence prefix, CharSequence suffix)</code><br>产生一个连接字符串的收集器，分隔符会置于字符串之间，且第一个字符串可以有前缀，最后一个可以有后缀</li>
+<li><code>public static &lt;T&gt; Collector&lt;T, ?, Integer&gt; summingInt|Long|Double(ToIntFunction&lt;? super T&gt; mapper)</code></li>
+</ul>
+<h2 id="API-java-util-Int-Long-DoubleSummaryStatistics"><a href="#API-java-util-Int-Long-DoubleSummaryStatistics" class="headerlink" title="API java.util.Int|Long|DoubleSummaryStatistics"></a>API <code>java.util.Int|Long|DoubleSummaryStatistics</code></h2><ul>
+<li><code>public final long getCount()</code><br>产生汇总后的元素个数</li>
+<li><code>public final long|double getSum()</code></li>
+<li><code>public final double getAverage()</code><br>产生汇总后的元素的总和或平均值，没有任何元素时返回0</li>
+<li><code>public final int|long|double getMin()</code></li>
+<li><code>public final int|long|double getMax()</code><br>产生汇总后的元素的最大值或最小值，没有任何元素时，产生<code>Integer|Long|Double.MAX|MIN_VALUE</code></li>
+</ul>
+<h1 id="收集到映射表，群组与分区、下游收集器"><a href="#收集到映射表，群组与分区、下游收集器" class="headerlink" title="收集到映射表，群组与分区、下游收集器"></a>收集到映射表，群组与分区、下游收集器</h1><h2 id="示例-1"><a href="#示例-1" class="headerlink" title="示例 1"></a>示例 1</h2><p>首先，再主类中定义一个静态内部类<code>Person</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略 getter and setter</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getClass().getName() + <span class="string">"[id="</span> + id + <span class="string">",name="</span> + name + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再定义一个静态方法<code>perple()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Stream&lt;Person&gt; <span class="title">people</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Stream.of(<span class="keyword">new</span> Person(<span class="number">1001</span>, <span class="string">"Peter"</span>), </span><br><span class="line">            <span class="keyword">new</span> Person(<span class="number">1002</span>, <span class="string">"Paul"</span>),</span><br><span class="line">            <span class="keyword">new</span> Person(<span class="number">1003</span>, <span class="string">"Mary"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果有一个<code>Stream&lt;Person&gt;</code>对象，想要将其元素收集到一个映射表中，后续就可以通过<code>ID</code>查找人员</p>
+<p><code>Collectors.toMap()</code>方法有有很多重载形式，其中一个两个引元，用来产生映射表的键和值，例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, String&gt; idToName = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Person::getName));</span><br><span class="line">System.out.println(<span class="string">"idToName: "</span> + idToName);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idToName: &#123;<span class="number">1001</span>=Peter, <span class="number">1002</span>=Paul, <span class="number">1003</span>=Mary&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常情况下，值应该是实际的元素，第二个函数就可以使用<code>Function.identity()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, Person&gt; idToPerson = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Function.identity()));</span><br><span class="line">System.out.println(<span class="string">"idToPerson: "</span> + idToPerson.getClass().getName() + idToPerson);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">idToPerson: java.util.HashMap</span><br><span class="line">&#123;<span class="number">1001</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1001</span>,name=Peter],</span><br><span class="line"> <span class="number">1002</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1002</span>,name=Paul],</span><br><span class="line"> <span class="number">1003</span>=cn.nopech.stream.CollectingIntoMaps$Person[id=<span class="number">1003</span>,name=Mary]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果有多个元素具有相同的键，就会存在冲突，收集器会抛出<code>IllegalStateExecption</code>异常</p>
+<p>可以通过<code>toMap</code>方法的第三个函数引元来覆盖行为，该函数会针对给定的已有值和新值来解决冲突并决定键对应的值，示例代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">idToPerson = people().collect(</span><br><span class="line">        Collectors.toMap(Person::getId, Function.identity(), </span><br><span class="line">            (exisitingValue, newValue) -&gt; &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">            &#125;, TreeMap::<span class="keyword">new</span>)</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"idToPerson: "</span> + idToPerson.getClass().getName() + idToPerson);</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="示例-2"><a href="#示例-2" class="headerlink" title="示例 2"></a>示例 2</h2><p>首先，我们构建一个映射表，存储所有可用<code>Locale</code>中的每种语言<br>它以默认<code>Locale</code>类中的名字（如<code>&quot;German&quot;</code>）为键，以其本地化的名字（如<code>&quot;Deutsch&quot;</code>）为值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Locale&gt; locales = Stream.of(Locale.getAvailableLocales());</span><br><span class="line">Map&lt;String, String&gt; languageNames = locales.collect(</span><br><span class="line">        Collectors.toMap(</span><br><span class="line">                Locale::getDisplayLanguage,</span><br><span class="line">                l -&gt; l.getDisplayLanguage(l),</span><br><span class="line">                (existingValue, newValue) -&gt; existingValue)</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"languagesNames: "</span> + languageNames);</span><br></pre></td></tr></table></figure>
+
+<p>我们不用关心同一种语言是否可能出现两次，只要记录第一项就好，部分输出如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">languagesNames: &#123;旺杜语=ewondo, 乌兹别克语=o‘zbek, =, 桑布鲁语=Kisampur, </span><br><span class="line">爪哇语=Jawa, 宿务语=Cebuano, 隆迪语=Ikirundi, 索加语=Olusoga, 克罗地亚语=hrvatski, </span><br><span class="line">尼昂科勒语=Runyankore, 亚美尼亚语=հայերեն, 瑞士德语=Schwiizertüütsch, ...</span><br></pre></td></tr></table></figure>
+
+<p>现在，假设我们需要了解给定国家的所有语言，就需要一个<code>Map&lt;String, Set&lt;String&gt;&gt;</code>对象，例如，<code>&quot;Switzerland&quot;</code>的值是集合<code>[French, German, Italian]</code></p>
+<p>首先，为每种语言都存储一个单例集，无论何时，只要找到了给定国家的新语言，都将已有集合和新集合做并集操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Locale&gt; locales = Stream.of(Locale.getAvailableLocales());</span><br><span class="line">Map&lt;String, Set&lt;String&gt;&gt; countryLanguageSets = locales.collect(</span><br><span class="line">        Collectors.toMap(</span><br><span class="line">                Locale::getDisplayCountry,</span><br><span class="line">                l -&gt; Collections.singleton(l.getDisplayLanguage()),</span><br><span class="line">                (a, b) -&gt; &#123; <span class="comment">// union of a and b</span></span><br><span class="line">                    Set&lt;String&gt; union = <span class="keyword">new</span> HashSet&lt;&gt;(a);</span><br><span class="line">                    union.addAll(b);</span><br><span class="line">                    <span class="keyword">return</span> union;</span><br><span class="line">                &#125;</span><br><span class="line">        )</span><br><span class="line">);</span><br><span class="line">System.out.println(<span class="string">"countryLanguageSets: "</span> + countryLanguageSets);</span><br></pre></td></tr></table></figure>
+
+<p>展示部分输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">countryLanguageSets: &#123;巴西=[西班牙语, 葡萄牙语], </span><br><span class="line">中国=[中文, 四川彝语, 粤语, 维吾尔语, 藏语], 澳大利亚=[英语], 蒙古=[蒙古语], </span><br><span class="line">佛得角=[卡布佛得鲁语, 葡萄牙语], 台湾=[中文], 萨摩亚=[英语], ...</span><br></pre></td></tr></table></figure>
+
+<h2 id="API-java-util-stream-Collectors-1"><a href="#API-java-util-stream-Collectors-1" class="headerlink" title="API java.util.stream.Collectors"></a>API <code>java.util.stream.Collectors</code></h2><ul>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, Map&lt;K,U&gt;&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, Map&lt;K,U&gt;&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                                BinaryOperator&lt;U&gt; mergeFunction)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt;</span><br><span class="line">Collector&lt;T, ?, M&gt; toMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                        Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                        BinaryOperator&lt;U&gt; mergeFunction,</span><br><span class="line">                        Supplier&lt;M&gt; mapFactory)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends ConcurrentMap&lt;K, U&gt;&gt;</span><br><span class="line">    Collector&lt;T, ?, M&gt; toConcurrentMap(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">                                    Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">                                    BinaryOperator&lt;U&gt; mergeFunction,</span><br><span class="line">                                    Supplier&lt;M&gt; mapFactory)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，会产生一个映射表或者并发映射表</p>
+<p><code>keyMapper</code>和<code>valueMapper</code>会产生一个键值对，默认情况下，键相同会抛出<code>IllegalStateExecption</code>异常，可用提供一个<code>mergeFunction</code>来合并具有相同键的值</p>
+<p>默认情况下，结果是一个<code>HashMap</code>或者<code>ConcurrentHashMap</code>对象，可用提供一个<code>mapFactory</code>，来产生期望的映射表实例</p>
+<h2 id="群组与分区"><a href="#群组与分区" class="headerlink" title="群组与分区"></a>群组与分区</h2><p>刚刚展示了如何收集给定国家的所有语言，但处理过程有些冗长，必须为每个映射表的值生成单例集合，然后指定如何合并现有集合和新集合</p>
+<p>将具有相同特性的值群聚成组，可用用<code>groupingBy()</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Locale&gt;&gt; countryToLocale = locales.collect(</span><br><span class="line">        Collectors.groupingBy(Locale::getCountry)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><code>Locale::getCountry</code>是群组的分类函数</p>
+<p>现在，可用查找给定国家代码对应的地点了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Locale&gt; chinaLocales = countryToLocale.get(<span class="string">"CN"</span>);</span><br><span class="line">chinaLocales.forEach(s -&gt; System.out.print(s + <span class="string">"  "</span>));</span><br><span class="line"><span class="comment">// Yield locales [yue_CN_#Hans  zh_CN  zh_CN_#Hans  ug_CN  bo_CN  ii_CN]</span></span><br></pre></td></tr></table></figure>
+
+
+<p>当分类函数是断言函数时，流的元素可以区分为两个列表：该函数返回<code>ture</code>的元素和其他元素</p>
+<p>这种情况下，使用<code>partitioningBy()</code>就比<code>groupingBy()</code>高效</p>
+<p>下面的例子，将所有<code>Locale</code>对象分成了使用用于和使用所有其他语言的两类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Boolean, List&lt;Locale&gt;&gt; englishAndOtherLocales = locales.collect(</span><br><span class="line">        Collectors.partitioningBy(l -&gt; l.getLanguage().equals(<span class="string">"en"</span>))</span><br><span class="line">);</span><br><span class="line">englishAndOtherLocales.forEach((k, v) -&gt; System.out.println(k + <span class="string">": "</span> + v));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">false: [, nds, ti_ET, ta_SG, lv, zh_SG_#Hans, ...</span><br><span class="line"><span class="keyword">true</span>: [en_NU, en_JM, en_LR, en_PW, en_US_POSIX, ...</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="API"><a href="#API" class="headerlink" title="API ``"></a>API ``</h3><ul>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ?, Map&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    groupingBy(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier)</span><br></pre></td></tr></table></figure>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ?, ConcurrentMap&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    groupingByConcurrent(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，它会产生一个映射表或者并发映射表，其键是将<code>classifier</code>应用于所有收集到的元素上所产生的结果，而值是由具有相同键的元素构成的列表</p>
+<ul>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ?, Map&lt;Boolean, List&lt;T&gt;&gt;&gt; </span><br><span class="line">    partitioningBy(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>产生一个收集器，他会产生一个映射表，其键是<code>true/false</code>，而值是由满足/不满足断言的元素构成的列表</p>
+<h2 id="下游收集器"><a href="#下游收集器" class="headerlink" title="下游收集器"></a>下游收集器</h2><p><code>groupingBy()</code>方法产生的映射表，每个值都是一个列表，若想要处理列表，就要提供一个“下游收集器”</p>
+<p>例如，想要获得集合而非列表，就可以用之前提到的<code>Collectors.toSet()</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Set&lt;Locale&gt;&gt; countryToLocaleSet = locales.collect(</span><br><span class="line">        Collectors.groupingBy(Locale::getCountry, Collectors.toSet())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="API-1"><a href="#API-1" class="headerlink" title="API"></a>API</h3><p>Java 提供了多种可用将群组元素约简为数字的收集器，这里简单列举几个API</p>
+<ul>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Long&gt; counting()</code><br>产生一个可以对收集到的元素进行计数的计数器</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ?, Integer&gt;</span><br><span class="line">    summingInt|Long|Double</span><br><span class="line">        (ToInt|Long|DoubleFunction&lt;? <span class="keyword">super</span> T&gt; mapper)</span><br></pre></td></tr></table></figure>
+<p>  产生一个收集器，计算总和</p>
+</li>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Optional&lt;T&gt;&gt; minBy(Comparator&lt;? super T&gt; comparator)</code></p>
+</li>
+<li><p><code>public static &lt;T&gt; Collector&lt;T, ?, Optional&lt;T&gt;&gt; maxBy(Comparator&lt;? super T&gt; comparator)</code><br>产生一个收集器，收集最大/最小值</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U, A, R&gt; Collector&lt;T, ?, R&gt; </span><br><span class="line">    mapping(Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; mapper,</span><br><span class="line">            Collector&lt;? <span class="keyword">super</span> U, A, R&gt; downstream)</span><br></pre></td></tr></table></figure>
+<p>  产生一个收集器，它会产生一个映射表，其键时将<code>mapper</code>应用到收集到的数据上而产生的，其值是使用<code>downstream</code>收集器收集到的具有相同键的元素</p>
+</li>
+</ul>
+<h1 id="约简操作"><a href="#约简操作" class="headerlink" title="约简操作"></a>约简操作</h1><h2 id="reduce方法"><a href="#reduce方法" class="headerlink" title="reduce方法"></a><code>reduce</code>方法</h2><p><code>reduce()</code>方法是一种用于流中计算某个值得通用机制，有多种重载形式</p>
+<h3 id="API-java-util-stream-Stream-1"><a href="#API-java-util-stream-Stream-1" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h3><ul>
+<li>Optional<T> reduce(BinaryOperator<T> accumulator);</li>
+<li>T reduce(T identity, BinaryOperator<T> accumulator);</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;U&gt; <span class="function">U <span class="title">reduce</span><span class="params">(U identity,</span></span></span><br><span class="line"><span class="function"><span class="params">            BiFunction&lt;U, ? <span class="keyword">super</span> T, U&gt; accumulator,</span></span></span><br><span class="line"><span class="function"><span class="params">            BinaryOperator&lt;U&gt; combiner)</span></span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>用给定得<code>accumulator</code>函数产生流中元素的累积总和<br>如果提供了单位元（<em>Identity Element</em>，也叫幺元），那么第一个被累计的元素就是该单位元<br>如果提供了组合器，那么它可以用来将分别累积的各个部分整合成总和</p>
+<h2 id="collect方法"><a href="#collect方法" class="headerlink" title="collect方法"></a><code>collect</code>方法</h2><p>有时<code>reduce</code>并不够通用，例如，想要收集<code>BitSet</code>中的结果，若收集操作时并行的，那么就不能直接将元素放在单个<code>BitSet</code>对象中，因为其不是线程安全的</p>
+<p>每个部分都要以其自己的空集开始，此时就该使用<code>collect</code>，它会接受单个引元<br>1）一个<code>Supplier&lt;R&gt;</code>对象，可以创建目标类型的新实例<br>2）一个<code>BiConsumer&lt;R, ? super T&gt;</code>对象，可以将一个元素添加到一个实例上<br>3）一个<code>BiConsumer&lt;R, R&gt;</code>对象，可以将两个实例合并成一个</p>
+<p>简单举个<code>collect</code>方法操作位集的例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BitSet result = stream.collect(BitSet::<span class="keyword">new</span>, BitSet::set, BitSet::or);</span><br></pre></td></tr></table></figure>
+
+<h3 id="API-java-util-stream-Stream-2"><a href="#API-java-util-stream-Stream-2" class="headerlink" title="API java.util.stream.Stream"></a>API <code>java.util.stream.Stream</code></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;R&gt; <span class="function">R <span class="title">collect</span><span class="params">(Supplier&lt;R&gt; supplier,</span></span></span><br><span class="line"><span class="function"><span class="params">              BiConsumer&lt;R, ? <span class="keyword">super</span> T&gt; accumulator,</span></span></span><br><span class="line"><span class="function"><span class="params">              BiConsumer&lt;R, R&gt; combiner)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>将元素收集到类型<code>R</code>的结果中<br>在每个部分上，都会调用<code>supplier</code>来提供初始结果，调用<code>accumulator</code>来交替的将元素添加到结果中，并调用<code>combiner</code>来整合两个结果</p>
+<h1 id="基本类型流"><a href="#基本类型流" class="headerlink" title="基本类型流"></a>基本类型流</h1><p>流库中提供了专门的类型<code>IntStream</code>, <code>LongStream</code>, <code>DoubleStream</code>，用来直接存储基本类型值，无需使用包装器<br>如果想要存储<code>short</code>, <code>char</code>, <code>byte</code>, <code>boolean</code>，可以直接使用<code>IntStream</code><br>对于<code>float</code>，可以使用<code>DoubleStream</code></p>
+<p>详情可以参照API ，里面提供了丰富的方法</p>
+<ul>
+<li><code>java.util.stream.IntStream</code></li>
+<li><code>java.util.stream.LongStream</code></li>
+<li><code>java.util.stream.DoubleStream</code></li>
+</ul>
+<h1 id="并行流"><a href="#并行流" class="headerlink" title="并行流"></a>并行流</h1><p>流使得并行处理块操作变得很容易，这个过程几乎是自动的</p>
+<h2 id="创建并行流"><a href="#创建并行流" class="headerlink" title="创建并行流"></a>创建并行流</h2><p>利用<code>Collection&lt;E&gt;</code>接口的<code>parallelStream()</code>方法从任意集合中获取一个并行流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; words = ...;</span><br><span class="line"></span><br><span class="line">Stream&lt;String&gt; parallelWords = words.parallelStream();</span><br></pre></td></tr></table></figure>
+
+<p><code>parallel()</code>方法可以将任意的顺序流转换为并行流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] wordArray = &#123;...&#125;;</span><br><span class="line"></span><br><span class="line">Stream&lt;String&gt; parallelWords2 = Stream.of(wordArray).parallel();</span><br></pre></td></tr></table></figure>
+
+<p>只要在终结方法执行时，流处于并行模式，那么所有的中间流操作都将被并行化</p>
+<p>当流操作并行运行时，目标是要让其返回结果与顺序执行时的返回结果相同，重要的是，这些操作可以以任意顺序执行</p>
+<p>例如，想要对字符串流中的所有短单词计数，我们需要确保传递给并行流操作的任何函数都可以安全并行执行</p>
+<p>如果用长度将字符串群组，然后分别对它们进行计数，那么就可以安全并行化这项计算</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, Long&gt; shortWordCounts = words.parallelStream()</span><br><span class="line">        .filter(s -&gt; s.length() &lt; <span class="number">10</span>)</span><br><span class="line">        .collect(Collectors.groupingBy(</span><br><span class="line">                String::length,</span><br><span class="line">                Collectors.counting()</span><br><span class="line">        ));</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>，传递给并行流操作的函数不应该被堵塞</p>
+<p>默认情况下，从有序集合（数组和列表）、生成器和迭代产生的流，或通过调用<code>Stream.sorted</code>产生的流，都是有序的，排序并不排斥高效的并行处理</p>
+<p>通过在流上调用<code>unsorted</code>方法，就可以明确表示我们对排序不感兴趣</p>
+<p>之前讨论过，合并映射表的代价很高，不过<code>Collectors.groupByConcurrent</code>方法使用了共享的并发映射表，为从并行化中受益，映射表中的值顺序不会与流中的顺序相同</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, List&lt;String&gt;&gt; result = words.parallelStream().collect(</span><br><span class="line">        Collectors.groupingByConcurrent(String::length)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果使用独立于排序的下游收集器，就不用太在意了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Integer, Long&gt; wordCounts = words.parallelStream()</span><br><span class="line">        .collect(</span><br><span class="line">                Collectors.groupingByConcurrent(</span><br><span class="line">                        String::length,</span><br><span class="line">                        Collectors.counting()</span><br><span class="line">                )</span><br><span class="line">        );</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：不要修改在执行某项流操作后将元素返回到流中的集合，因为流不会收集它们的数据，数据总是在单独的集合中。如果修改了这样的集合，那么流操作的结果就是未定义的</p>
+<p>为了让并行流正常工作，需要满足许多条件：</p>
+<ul>
+<li>数据应该在内存中</li>
+<li>流应该可以被高效地分成若干个字部份</li>
+<li>流操作的工作量应该具有较大的规模</li>
+<li>流操作不应该被阻塞</li>
+</ul>
+<p><strong>总之，不要将所有流操作都转换为并行流，只有在对已经位于内存中的数据执行大量计算操作时，才应该使用并行流</strong></p>
+<h2 id="API-java-util-stream-BaseStream-lt-T-S-extends-BaseStream-lt-T-S-gt-gt-接口"><a href="#API-java-util-stream-BaseStream-lt-T-S-extends-BaseStream-lt-T-S-gt-gt-接口" class="headerlink" title="API java.util.stream.BaseStream&lt;T, S extends BaseStream&lt;T, S&gt;&gt;接口"></a>API <code>java.util.stream.BaseStream&lt;T, S extends BaseStream&lt;T, S&gt;&gt;</code>接口</h2><ul>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">S <span class="title">parallel</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>  产生一个与当前流中元素相同的并行流</p>
+</li>
+<li>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">S <span class="title">unordered</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>  产生一个与当前流中元素相同的无序流</p>
+</li>
+</ul>
+<h2 id="API-java-util-Collection-lt-E-gt-接口"><a href="#API-java-util-Collection-lt-E-gt-接口" class="headerlink" title="API java.util.Collection&lt;E&gt;接口"></a>API <code>java.util.Collection&lt;E&gt;</code>接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">default</span> Stream&lt;E&gt; <span class="title">parallelStream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用当前集合中的元素产生一个并行流</p>
+<h2 id="最后附上应该并行流的示例"><a href="#最后附上应该并行流的示例" class="headerlink" title="最后附上应该并行流的示例"></a>最后附上应该并行流的示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ParallelStreams</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String contents = <span class="keyword">new</span> String(Files.readAllBytes(</span><br><span class="line">                Paths.get(<span class="string">"...\\microservice.txt"</span>)),</span><br><span class="line">                StandardCharsets.UTF_8);</span><br><span class="line">        List&lt;String&gt; wordList = Arrays.asList(contents.split(<span class="string">"\\PL+"</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Group and count</span></span><br><span class="line">        Map&lt;Integer, Long&gt; shortWordCounts = wordList.parallelStream()</span><br><span class="line">                .filter(s -&gt; s.length() &lt; <span class="number">10</span>)</span><br><span class="line">                .collect(Collectors.groupingBy(String::length, Collectors.counting()));</span><br><span class="line">        System.out.println(<span class="string">"shortWordCounts: "</span> + shortWordCounts);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Downstream order not deterministic</span></span><br><span class="line">        Map&lt;Integer, List&lt;String&gt;&gt; result = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length)</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"length(13): "</span> + result.get(<span class="number">13</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// for comparing</span></span><br><span class="line">        result = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length)</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"length(13): "</span> + result.get(<span class="number">13</span>));</span><br><span class="line"></span><br><span class="line">        Map&lt;Integer, Long&gt; wordCounts = wordList.parallelStream().collect(</span><br><span class="line">                Collectors.groupingByConcurrent(String::length, Collectors.counting())</span><br><span class="line">        );</span><br><span class="line">        System.out.println(<span class="string">"wordCounts: "</span> + wordCounts);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shortWordCounts: &#123;<span class="number">0</span>=<span class="number">1</span>, <span class="number">1</span>=<span class="number">33</span>, <span class="number">2</span>=<span class="number">99</span>, <span class="number">3</span>=<span class="number">94</span>, <span class="number">4</span>=<span class="number">94</span>, <span class="number">5</span>=<span class="number">48</span>, <span class="number">6</span>=<span class="number">47</span>, <span class="number">7</span>=<span class="number">42</span>, <span class="number">8</span>=<span class="number">51</span>, <span class="number">9</span>=<span class="number">17</span>&#125;</span><br><span class="line">length(<span class="number">13</span>): [architectural, communicating, architectural, independently, independently, Microservices]</span><br><span class="line">length(<span class="number">13</span>): [architectural, architectural, Microservices, communicating, independently, independently]</span><br><span class="line">wordCounts: &#123;<span class="number">0</span>=<span class="number">1</span>, <span class="number">1</span>=<span class="number">33</span>, <span class="number">2</span>=<span class="number">99</span>, <span class="number">3</span>=<span class="number">94</span>, <span class="number">4</span>=<span class="number">94</span>, <span class="number">5</span>=<span class="number">48</span>, <span class="number">6</span>=<span class="number">47</span>, <span class="number">7</span>=<span class="number">42</span>, <span class="number">8</span>=<span class="number">51</span>, <span class="number">9</span>=<span class="number">17</span>, <span class="number">10</span>=<span class="number">27</span>, <span class="number">11</span>=<span class="number">17</span>, <span class="number">12</span>=<span class="number">21</span>, <span class="number">13</span>=<span class="number">6</span>&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Nopech 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Nopech 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java%E7%B1%BB-Stream/" rel="tag"><i class="fa fa-tag"></i> Java类-Stream</a>
+              <a href="/tags/Java%E7%B1%BB-Collectors/" rel="tag"><i class="fa fa-tag"></i> Java类-Collectors</a>
+              <a href="/tags/%E5%B9%B6%E8%A1%8C%E6%B5%81/" rel="tag"><i class="fa fa-tag"></i> 并行流</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/01/Java-%E6%B5%81%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="Java-流（一）">
+      <i class="fa fa-chevron-left"></i> Java-流（一）
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#收集结果"><span class="nav-number">1.</span> <span class="nav-text">收集结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一些简单收集结果的用法"><span class="nav-number">1.1.</span> <span class="nav-text">一些简单收集结果的用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-stream-Stream"><span class="nav-number">1.2.</span> <span class="nav-text">API java.util.stream.Stream</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-stream-Collectors"><span class="nav-number">1.3.</span> <span class="nav-text">API java.util.stream.Collectors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-Int-Long-DoubleSummaryStatistics"><span class="nav-number">1.4.</span> <span class="nav-text">API java.util.Int|Long|DoubleSummaryStatistics</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#收集到映射表，群组与分区、下游收集器"><span class="nav-number">2.</span> <span class="nav-text">收集到映射表，群组与分区、下游收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#示例-1"><span class="nav-number">2.1.</span> <span class="nav-text">示例 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例-2"><span class="nav-number">2.2.</span> <span class="nav-text">示例 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-stream-Collectors-1"><span class="nav-number">2.3.</span> <span class="nav-text">API java.util.stream.Collectors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#群组与分区"><span class="nav-number">2.4.</span> <span class="nav-text">群组与分区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API"><span class="nav-number">2.4.1.</span> <span class="nav-text">API &#96;&#96;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下游收集器"><span class="nav-number">2.5.</span> <span class="nav-text">下游收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API-1"><span class="nav-number">2.5.1.</span> <span class="nav-text">API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#约简操作"><span class="nav-number">3.</span> <span class="nav-text">约简操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce方法"><span class="nav-number">3.1.</span> <span class="nav-text">reduce方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API-java-util-stream-Stream-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">API java.util.stream.Stream</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#collect方法"><span class="nav-number">3.2.</span> <span class="nav-text">collect方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API-java-util-stream-Stream-2"><span class="nav-number">3.2.1.</span> <span class="nav-text">API java.util.stream.Stream</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本类型流"><span class="nav-number">4.</span> <span class="nav-text">基本类型流</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#并行流"><span class="nav-number">5.</span> <span class="nav-text">并行流</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建并行流"><span class="nav-number">5.1.</span> <span class="nav-text">创建并行流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-stream-BaseStream-lt-T-S-extends-BaseStream-lt-T-S-gt-gt-接口"><span class="nav-number">5.2.</span> <span class="nav-text">API java.util.stream.BaseStream&lt;T, S extends BaseStream&lt;T, S&gt;&gt;接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-java-util-Collection-lt-E-gt-接口"><span class="nav-number">5.3.</span> <span class="nav-text">API java.util.Collection&lt;E&gt;接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后附上应该并行流的示例"><span class="nav-number">5.4.</span> <span class="nav-text">最后附上应该并行流的示例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Nopech"
+      src="/images/myavatar.png">
+  <p class="site-author-name" itemprop="name">Nopech</p>
+  <div class="site-description" itemprop="description">Thinking and coding.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Nopeful" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Nopeful" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:nopeyeply@gmail.com" title="E-Mail → mailto:nopeyeply@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/hasakiwa" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;hasakiwa" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/yourname" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v0n.top/" title="https:&#x2F;&#x2F;www.v0n.top" rel="noopener" target="_blank">VonLYC's Blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Nopech</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">129k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:58</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.0
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '32e8dbe7b98bd0370d83',
+      clientSecret: '00cb2b11a235cf56fe011c1ad82256677d1d86a8',
+      repo: 'BlogComments',
+      owner: 'Nopeful',
+      admin: ['Nopeful'],
+      id: '389432673fa56a5ee0eee1288b594537',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
