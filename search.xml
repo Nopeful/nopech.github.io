@@ -322,11 +322,11 @@
         <category>算法</category>
       </categories>
       <tags>
+        <tag>双指针法</tag>
+        <tag>回溯法</tag>
         <tag>二分查找法</tag>
         <tag>分治法</tag>
         <tag>深度优先搜索</tag>
-        <tag>双指针法</tag>
-        <tag>回溯法</tag>
         <tag>递归法</tag>
       </tags>
   </entry>
@@ -986,11 +986,11 @@
         <category>算法</category>
       </categories>
       <tags>
-        <tag>双指针法</tag>
-        <tag>回溯法</tag>
         <tag>滑动窗口</tag>
         <tag>动态规划</tag>
         <tag>Manacher&#39;s Algorithm</tag>
+        <tag>双指针法</tag>
+        <tag>回溯法</tag>
       </tags>
   </entry>
   <entry>
@@ -2222,12 +2222,12 @@
         <category>Java反射机制</category>
       </categories>
       <tags>
-        <tag>Java反射</tag>
         <tag>Java类-Class</tag>
         <tag>Java类-Constructor</tag>
         <tag>Java类-Method</tag>
         <tag>Java类-Field</tag>
         <tag>Java类-Modifier</tag>
+        <tag>Java反射</tag>
       </tags>
   </entry>
   <entry>
