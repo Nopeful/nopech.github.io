@@ -1,6 +1,411 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>字符串模式匹配算法（BF/KMP/BM/Sunday）</title>
+    <url>/2020/02/06/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95%EF%BC%88BF-KMP-BM-Sunday%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="28-实现-strStr-（KMP算法-BM算法-Sunday算法）"><a href="#28-实现-strStr-（KMP算法-BM算法-Sunday算法）" class="headerlink" title="28.实现 strStr()（KMP算法/BM算法/Sunday算法）"></a>28.实现 <code>strStr()</code>（KMP算法/BM算法/Sunday算法）</h1><h2 id="标注"><a href="#标注" class="headerlink" title="标注"></a>标注</h2><p><strong>来源：力扣（<em>LeetCode</em>）</strong><br><strong>链接：<a href="https://leetcode-cn.com/problemset/algorithms/" target="_blank" rel="noopener">https://leetcode-cn.com/problemset/algorithms/</a></strong><br><strong>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</strong></p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>实现 strStr() 函数。</p>
+<p>给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。</p>
+<p>示例 1:</p>
+<blockquote>
+<p>输入: haystack = “hello”, needle = “ll”<br>输出: 2</p>
+</blockquote>
+<p>示例 2:</p>
+<blockquote>
+<p>输入: haystack = “aaaaa”, needle = “bba”<br>输出: -1</p>
+</blockquote>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>这题的两个参数很有意思：<code>haystack</code>与<code>needle</code><br>出自 <em>“Find a needle in a haystack.”</em>，译为大海捞针</p>
+<h3 id="库函数indexOf"><a href="#库函数indexOf" class="headerlink" title="库函数indexOf()"></a>库函数<code>indexOf()</code></h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> haystack.indexOf(needle);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="暴力匹配（brute-force-search）"><a href="#暴力匹配（brute-force-search）" class="headerlink" title="暴力匹配（brute-force search）"></a>暴力匹配（brute-force search）</h3><p>暴力匹配法，遍历主串，当主串索引字符与模式串相等时，就尝试匹配</p>
+<p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">    <span class="keyword">int</span> targetLen = needle.length();</span><br><span class="line">    <span class="keyword">if</span> (targetLen == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (haystack.charAt(i) == needle.charAt(<span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="keyword">int</span> cnt = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (cnt &lt; targetLen &amp;&amp; i + cnt &lt; len) &#123;</span><br><span class="line">                <span class="keyword">if</span> (haystack.charAt(i + cnt) == needle.charAt(cnt)) &#123;</span><br><span class="line">                    cnt++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cnt == targetLen) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n * m)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="KMP-算法"><a href="#KMP-算法" class="headerlink" title="KMP 算法"></a>KMP 算法</h3><p><strong>简介</strong>：KMP 算法是一种改进的字符串匹配算法，由 D.E.Knuth，J.H.Morris 和 V.R.Pratt 提出的，因此人们称它为克努特—莫里斯—普拉特操作（简称 KMP 算法）。KMP 算法的核心是利用匹配失败后的信息，尽量减少模式串与主串的匹配次数以达到快速匹配的目的。具体实现就是通过一个 next() 函数实现，函数本身包含了模式串的局部匹配信息</p>
+<p>大学课程数据结构（严蔚敏版）已经介绍过<code>KMP</code>算法，这里简单复习一下</p>
+<p>首先是<code>next[]</code>数组的求解</p>
+<p>我们假设有这样一个模式串：<code>ababca</code>，对于其<code>next[]</code>数组，简单概括一下，第一位<code>0</code>，第二位<code>1</code>，从第三位开始，看前几位首位是否匹配，<code>next[i]</code>为匹配的字符数<code>+1</code>，示例如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式串</th>
+<th>a</th>
+<th>b</th>
+<th>a</th>
+<th>b</th>
+<th>c</th>
+<th>a</th>
+<th>d</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>next[]</strong></td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody></table>
+<p>但这个<code>next[]</code>数组是建立在字符串是从索引<code>1</code>开始的，所以简单修改</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式串</th>
+<th>a</th>
+<th>b</th>
+<th>a</th>
+<th>b</th>
+<th>c</th>
+<th>a</th>
+<th>d</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>next[]</strong></td>
+<td>-1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p><strong>附上<code>next[]</code>数组算法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get_next</span><span class="params">(String model, <span class="keyword">int</span> len, <span class="keyword">int</span>[] next)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// i 是模式串的索引，只增不减</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// j 是 next[] 的索引</span></span><br><span class="line">    <span class="keyword">int</span> j = -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 首先给 next[0] 赋值</span></span><br><span class="line">    next[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; len - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 匹配的情况下递增索引 i and j，并给 next[i] 赋值</span></span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || model.charAt(i) == model.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            next[i] = j;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;  <span class="comment">// 不匹配的话把 j 回溯到适当位置</span></span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">    <span class="keyword">int</span> targetLen = needle.length();</span><br><span class="line">    <span class="keyword">if</span> (targetLen == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> next[] = <span class="keyword">new</span> <span class="keyword">int</span>[targetLen];</span><br><span class="line">    get_next(needle, targetLen, next);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; len &amp;&amp; j &lt; targetLen) &#123;</span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || haystack.charAt(i) == needle.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (j == targetLen) &#123;</span><br><span class="line">        <span class="keyword">return</span> i - targetLen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get_next</span><span class="params">(String model, <span class="keyword">int</span> len, <span class="keyword">int</span>[] next)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> j = -<span class="number">1</span>;</span><br><span class="line">    next[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; len - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || model.charAt(i) == model.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            next[i] = j;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n+m)</li>
+<li>空间复杂度：O(m)</li>
+</ul>
+<p>当然，<code>KMP</code>算法可以改进：当模式串中有多个连续重复的元素，<code>next[]</code>就可以优化</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get_next</span><span class="params">(String model, <span class="keyword">int</span> len, <span class="keyword">int</span>[] next)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// i 是模式串的索引，只增不减</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// j 是 next[] 的索引</span></span><br><span class="line">    <span class="keyword">int</span> j = -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 首先给 next[0] 赋值</span></span><br><span class="line">    next[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; len - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 匹配的情况下递增索引 i and j，并给 next[i] 赋值</span></span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || model.charAt(i) == model.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            <span class="comment">//==================== 优化处 ======================//</span></span><br><span class="line">            <span class="comment">// 如果当前字符与前缀字符不同，就和没优化前进行相同操作</span></span><br><span class="line">            <span class="keyword">if</span> (model.charAt(i) != model.charAt(j)) &#123;</span><br><span class="line">                next[i] = j;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;    <span class="comment">// 如果当前字符与前缀字符相同</span></span><br><span class="line">                next[i] = next[j];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//==================== 优化处 ======================//</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;  <span class="comment">// 不匹配的话回溯到适当位置</span></span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BM-算法"><a href="#BM-算法" class="headerlink" title="BM 算法"></a>BM 算法</h3><p><strong>简介</strong>：Boyer-Moor e字符串搜索算法是一种非常高效的字符串搜索算法。它由 Bob Boyer 和 J Strother Moore 设计于1977年。此算法仅对搜索目标字符串（关键字）进行预处理，而非被搜索的字符串。虽然 Boyer-Moore 算法的执行时间同样线性依赖于被搜索字符串的大小，但是通常仅为其它算法的一小部分：它不需要对被搜索的字符串中的字符进行逐一比较，而会跳过其中某些部分。通常搜索关键字越长，算法速度越快</p>
+<p><strong>现代许多文本处理器在搜索功能这一块都采用了主流的 BM 算法</strong></p>
+<p>在讲 BM 算法之前，我们用网上常用的例子模仿一下过程</p>
+<blockquote>
+<p>文本串：”HERE IS A SIMPLE EXAMPLE”<br>模式串：”EXAMPLE”</p>
+</blockquote>
+<p>|索引|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23<br>|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|H|E|R|E| |I|S| |A| |S|I|M|P|L|E| |E|X|A|M|P|L|E|<br>|模式串|E|X|A|M|P|L|E|<br>|第一次||||||||E|X|A|M|P|L|E|<br>|第二次||||||||||E|X|A|M|P|L|E|<br>|第三次||||||||||||||||E|X|A|M|P|L|E|<br>|第四次||||||||||||||||||E|X|A|M|P|L|E|</p>
+<p>首先，需要引入两个概念：坏字符规则和好后缀规则</p>
+<h4 id="1）坏字符规则（bad-character-rule）"><a href="#1）坏字符规则（bad-character-rule）" class="headerlink" title="1）坏字符规则（bad character rule）"></a>1）坏字符规则（bad character rule）</h4><blockquote>
+<p>概念：坏字符，就是模式串与文本串在从右向左的匹配过程中，文本串中出现的第一个不与模式串匹配的字符</p>
+</blockquote>
+<p>举个例子：<br>|索引|0|1|2|3|4|5|6|7|<br>|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|c|a|d|b|c|d|<br>|模式串|a|b|d| | | | | |</p>
+<p>如上表格所示，文本串的第 2 为字符<code>c</code>就叫做坏字符，不考虑好后缀的情况下，可以直接把模式串后移到文本串第 3 位，如下所示</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td></td>
+<td></td>
+<td></td>
+<td>a</td>
+<td>b</td>
+<td>d</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>但是，如果文本串与模式串是如下情况，可以发现，显然移动的距离过大了</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>移动后</td>
+<td></td>
+<td></td>
+<td></td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>其实只需移动到第 1 位即可，这时候就需要<strong>好后缀规则</strong>辅助</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td></td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="2）好后缀规则（good-suffix-shift）"><a href="#2）好后缀规则（good-suffix-shift）" class="headerlink" title="2）好后缀规则（good suffix shift）"></a>2）好后缀规则（good suffix shift）</h4><blockquote>
+<p>概念：好后缀，就是模式串与文本串在从右向左的匹配过程中，文本串中与模式串匹配的部分</p>
+</blockquote>
+<p>例如：<br>|索引|0|1|2|3|4|5|6|7|8|<br>|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|c|a|d|b|c|d|e|<br>|模式串|a|d|c|a|d| | | |</p>
+<p>匹配部分<code>&quot;ad&quot;</code>就叫做好后缀，我们好后缀<code>&quot;ad&quot;</code>，在模式串中搜索是否有第二个匹配部分<code>&quot;ad&quot;&#39;</code>，如果有，便移动模式串中另一个匹配部分与文本串中的好后缀对其，如下</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td>a</td>
+<td>d</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>移动后</td>
+<td></td>
+<td></td>
+<td></td>
+<td>a</td>
+<td>d</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h4><h5 id="先实现生成坏字符数组的算法"><a href="#先实现生成坏字符数组的算法" class="headerlink" title="先实现生成坏字符数组的算法"></a>先实现生成坏字符数组的算法</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ASCII 码表的长度</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 生成坏字符数组 bc[]</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bc 生成的坏字符数组</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> len 模式串的长度</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateBC</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] bc)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">        bc[i] = -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        bc[pattern.charAt(i)] = i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="接着生成好后缀数组gs"><a href="#接着生成好后缀数组gs" class="headerlink" title="接着生成好后缀数组gs[]"></a>接着生成好后缀数组<code>gs[]</code></h5><p>实际上好后缀数组生成有三种情况：</p>
+<ol>
+<li>好后缀在模式串中还有完全相同的部分<img src="/img/28_bm_case1.png"></li>
+<li>好后缀的后某一部分在模式串中还有完全相同的部分<img src="/img/28_bm_case2.png"></li>
+<li>好后缀在模式串中再无完全相同的部分<img src="/img/28_bm_case3.png">
+
+
+</li>
+</ol>
+<p>以模式串<code>abcabc</code>列个<code>suffix[]</code></p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模式串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="right">后缀子串</th>
+<th align="center">长度</th>
+<th>suffix[]</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">c</td>
+<td align="center">1</td>
+<td>suffix[1] = 2</td>
+</tr>
+<tr>
+<td align="right">bc</td>
+<td align="center">2</td>
+<td>suffix[2] = 1</td>
+</tr>
+<tr>
+<td align="right">abc</td>
+<td align="center">3</td>
+<td>suffix[3] = 0</td>
+</tr>
+<tr>
+<td align="right">cabc</td>
+<td align="center">4</td>
+<td>suffix[4] = -1</td>
+</tr>
+<tr>
+<td align="right">bcabc</td>
+<td align="center">5</td>
+<td>suffix[5] = -1</td>
+</tr>
+</tbody></table>
+<p>生成<code>suffix[]</code>数组</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 生成 suffix[] 数组</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> suffix</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateSuffix</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] suffix)</span> </span>&#123;</span><br><span class="line">    suffix[len - <span class="number">1</span>] = len;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">int</span> index = i;</span><br><span class="line">        <span class="keyword">while</span> (index &gt;= <span class="number">0</span> &amp;&amp; pattern.charAt(index) == pattern.charAt(len - <span class="number">1</span> + index - i)) &#123;</span><br><span class="line">            index--;</span><br><span class="line">        &#125;</span><br><span class="line">        suffix[i] = i - index;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>生成好后缀数组<code>gs[]</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 生成好后缀数组 gs[]</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> gs 好后缀数组</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateGS</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] gs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] suffix = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">    generateSuffix(pattern, len, suffix);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三种情况</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        gs[i] = len;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第二种情况</span></span><br><span class="line">    <span class="comment">/* 从右向左扫描，确保模式串移动距离最少 */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">if</span> (suffix[i] == i + <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">                <span class="comment">// 确保 gs[j] 只被修改一次</span></span><br><span class="line">                <span class="keyword">if</span> (gs[j] == len) &#123;</span><br><span class="line">                    gs[j] = len - <span class="number">1</span> - i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一种情况</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        gs[len - <span class="number">1</span> - suffix[i]] = len - <span class="number">1</span> - i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h5><p>求得了坏字符数组和好后缀数组，接下来，每次不匹配时移动的距离就取两个中最大的一个即可</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ASCII 码表的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成坏字符数组 bc[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bc 生成的坏字符数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateBC</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] bc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">            bc[i] = -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            bc[pattern.charAt(i)] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成 suffix[] 数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> suffix</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateSuffix</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] suffix)</span> </span>&#123;</span><br><span class="line">        suffix[len - <span class="number">1</span>] = len;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">int</span> index = i;</span><br><span class="line">            <span class="keyword">while</span> (index &gt;= <span class="number">0</span> &amp;&amp; pattern.charAt(index) == pattern.charAt(len - <span class="number">1</span> + index - i)) &#123;</span><br><span class="line">                index--;</span><br><span class="line">            &#125;</span><br><span class="line">            suffix[i] = i - index;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成好后缀数组 gs[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> gs 好后缀数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateGS</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] gs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] suffix = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">        generateSuffix(pattern, len, suffix);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            gs[i] = len;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 第二种情况</span></span><br><span class="line">        <span class="comment">/* 从右向左扫描，确保模式串移动距离最少 */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (suffix[i] == i + <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">                    <span class="comment">// 确保 gs[j] 只被修改一次</span></span><br><span class="line">                    <span class="keyword">if</span> (gs[j] == len) &#123;</span><br><span class="line">                        gs[j] = len - <span class="number">1</span> - i;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            gs[len - <span class="number">1</span> - suffix[i]] = len - <span class="number">1</span> - i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">        <span class="keyword">int</span> ptnLen = needle.length();</span><br><span class="line">        <span class="keyword">if</span> (ptnLen == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bc = <span class="keyword">new</span> <span class="keyword">int</span>[SIZE];</span><br><span class="line">        <span class="keyword">int</span>[] gs = <span class="keyword">new</span> <span class="keyword">int</span>[ptnLen];</span><br><span class="line">        generateBC(needle, ptnLen, bc);</span><br><span class="line">        generateGS(needle, ptnLen, gs);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len - ptnLen) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = ptnLen - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; needle.charAt(j) == haystack.charAt(i + j)) &#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 选择移动距离最大者</span></span><br><span class="line">            i += Math.max(bc[haystack.charAt(i + j)] - len + <span class="number">1</span> + j, gs[j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n / m)</li>
+<li>空间复杂度：O(m)</li>
+</ul>
+<h3 id="Sunday-算法"><a href="#Sunday-算法" class="headerlink" title="Sunday 算法"></a>Sunday 算法</h3><p><strong>简介</strong>：Sunday 算法是 Daniel M.Sunday 于 1990 年提出的字符串模式匹配。其核心思想是：在匹配过程中，模式串发现不匹配时，算法能跳过尽可能多的字符以进行下一步的匹配，从而提高了匹配效率</p>
+<p>与 BM 算法不同的是，Sunday 算法是从前往后匹配</p>
+<p>当发现文本串与模式串不匹配时，关注的是文本串中参加匹配的字符串末位的下一位，这是得分两种情况</p>
+<h4 id="CASE-1：该位字符没出现模式串中"><a href="#CASE-1：该位字符没出现模式串中" class="headerlink" title="CASE 1：该位字符没出现模式串中"></a>CASE 1：该位字符没出现模式串中</h4><p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d<br>|模式串|a|b|c|d| | | | |</p>
+<p>我们从头开始匹配，在索引<code>2</code>处，发现文本串与模式串不匹配，那么我们关注的就是文本串的索引<code>4</code>处的字符<code>e</code></p>
+<p>很显然，<code>e</code>并没有在模式串中出现，所以我们把模式串整体后移<code>4</code>位，得到</p>
+<p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d|<br>|模式串| | | | |a|b|c|d| | |</p>
+<h4 id="CASE-2：该位字符出现在模式串中"><a href="#CASE-2：该位字符出现在模式串中" class="headerlink" title="CASE 2：该位字符出现在模式串中"></a>CASE 2：该位字符出现在模式串中</h4><p>继续上一个例子，我们发现，移动后得模式串还是不能与文本串匹配，这是我们关注文本串索引<code>8</code>处的字符<code>c</code>，发现其在模式串中出现了</p>
+<p>于是，我们以如下方式移动模式串</p>
+<p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d|<br>|模式串| | | | | | |a|b|c|d|</p>
+<p>很显然，此时已经完成了匹配</p>
+<h4 id="算法实现-1"><a href="#算法实现-1" class="headerlink" title="算法实现"></a>算法实现</h4><p>以模式串<code>abcdab</code>为例，逐个列出其每一个对应字符匹配时需要移动的距离<br>|索引|字符|移动距离|<br>|:-:|:-:|:-:|<br>|0|a|6|<br>|1|b|5|<br>|2|c|4|<br>|3|d|3|<br>|4|a|2|<br>|5|b|1|</p>
+<p>可以看出，若是有重复元素应该取后出现的，所以应该从头遍历模式串，就比如<code>a</code>、<code>b</code>应该去覆盖后的值<code>2</code>、<code>1</code></p>
+<p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">        <span class="keyword">int</span> ptnLen = needle.length();</span><br><span class="line">        <span class="keyword">if</span> (ptnLen == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 移动步长数组 sunday[]</span></span><br><span class="line">        <span class="keyword">int</span>[] sunday = <span class="keyword">new</span> <span class="keyword">int</span>[SIZE];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">            sunday[i] = ptnLen + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ptnLen; i++) &#123;</span><br><span class="line">            sunday[needle.charAt(i)] = ptnLen - i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len - ptnLen) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (j &lt; ptnLen &amp;&amp; haystack.charAt(i + j) == needle.charAt(j)) &#123;</span><br><span class="line">                j++;</span><br><span class="line">                <span class="keyword">if</span> (j == ptnLen) &#123;</span><br><span class="line">                    <span class="keyword">return</span> i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 判断是否越界</span></span><br><span class="line">            <span class="keyword">if</span> (i + ptnLen &gt;= len) &#123;</span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 移动模式串</span></span><br><span class="line">            i += sunday[haystack.charAt(i + ptnLen)];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：<ul>
+<li>最好情况：O(n / m)</li>
+<li>平均情况：O(n)</li>
+<li>最坏情况：O(n * m)<br>（当模式串为<code>aaaaa</code>时，每次只能移动一位，退化为 BF 匹配）</li>
+</ul>
+</li>
+<li>空间复杂度：O(m)</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>KMP算法</tag>
+        <tag>BM算法</tag>
+        <tag>Sunday算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LeetCode算法经典题集（二）</title>
     <url>/2020/02/03/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
     <content><![CDATA[<h1 id="标注"><a href="#标注" class="headerlink" title="标注"></a>标注</h1><p><strong>来源：力扣（<em>LeetCode</em>）</strong><br><strong>链接：<a href="https://leetcode-cn.com/problemset/algorithms/" target="_blank" rel="noopener">https://leetcode-cn.com/problemset/algorithms/</a></strong><br><strong>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</strong></p>
@@ -229,7 +634,7 @@
 </blockquote>
 <p>重复这一过程，直到我们得到了最终的有序链表。</p>
 <p>在每一次配对合并的过程中都会遍历几乎全部 <code>N</code> 个节点，并重复这一过程 <strong>log<sub>2</sub>k 次</strong></p>
- <img src="img/23.png">
+ <img src="/img/23.png">
 
 <p><strong>代码如下</strong></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeKLists</span><span class="params">(ListNode[] lists)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = lists.length;</span><br><span class="line">    <span class="keyword">int</span> interval = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (interval &lt; len) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - interval; i += interval * <span class="number">2</span>) &#123;</span><br><span class="line">            lists[i] = mergeTwoLists(lists[i], lists[i + interval]);</span><br><span class="line">        &#125;</span><br><span class="line">        interval *= <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len &gt; <span class="number">0</span> ? lists[<span class="number">0</span>] : <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeTwoLists</span><span class="params">(ListNode l1, ListNode l2)</span> </span>&#123;</span><br><span class="line">    ListNode head = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">    ListNode point = head;</span><br><span class="line">    <span class="keyword">while</span> (l1 != <span class="keyword">null</span> &amp;&amp; l2 != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (l1.val &lt;= l2.val) &#123;</span><br><span class="line">            point.next = l1;</span><br><span class="line">            l1 = l1.next;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            point.next = l2;</span><br><span class="line">            l2 = l1;</span><br><span class="line">            l1 = point.next.next;</span><br><span class="line">        &#125;</span><br><span class="line">        point = point.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (l1 == <span class="keyword">null</span>) &#123;</span><br><span class="line">        point.next=l2;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        point.next=l1;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -322,11 +727,11 @@
         <category>算法</category>
       </categories>
       <tags>
-        <tag>双指针法</tag>
-        <tag>回溯法</tag>
         <tag>二分查找法</tag>
         <tag>分治法</tag>
         <tag>深度优先搜索</tag>
+        <tag>双指针法</tag>
+        <tag>回溯法</tag>
         <tag>递归法</tag>
       </tags>
   </entry>
@@ -986,11 +1391,11 @@
         <category>算法</category>
       </categories>
       <tags>
+        <tag>双指针法</tag>
+        <tag>回溯法</tag>
         <tag>滑动窗口</tag>
         <tag>动态规划</tag>
         <tag>Manacher&#39;s Algorithm</tag>
-        <tag>双指针法</tag>
-        <tag>回溯法</tag>
       </tags>
   </entry>
   <entry>
