@@ -58,7 +58,7 @@
 <meta property="og:image" content="http://yoursite.com/img/28_bm_case2.png">
 <meta property="og:image" content="http://yoursite.com/img/28_bm_case3.png">
 <meta property="article:published_time" content="2020-02-06T05:33:51.000Z">
-<meta property="article:modified_time" content="2020-02-06T07:12:30.208Z">
+<meta property="article:modified_time" content="2020-02-07T07:26:52.454Z">
 <meta property="article:author" content="Nopech">
 <meta property="article:tag" content="KMP算法">
 <meta property="article:tag" content="BM算法">
@@ -153,17 +153,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">44</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">53</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">15</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">20</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-outlook">
@@ -246,10 +246,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-06 13:33:51 / 修改时间：15:12:30" itemprop="dateCreated datePublished" datetime="2020-02-06T13:33:51+08:00">2020-02-06</time>
+              <time title="创建时间：2020-02-06 13:33:51" itemprop="dateCreated datePublished" datetime="2020-02-06T13:33:51+08:00">2020-02-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 15:26:52" itemprop="dateModified" datetime="2020-02-07T15:26:52+08:00">2020-02-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -275,14 +281,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.4k</span>
+              <span>8.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>8 分钟</span>
             </span>
             <div class="post-description">相信对字符串的模式匹配问题大家都不陌生，大学数据结构课程介绍了对暴力匹配算法的优化之一————KMP算法，但实际上，这个算法在工程上并不常用，许多文本处理器在搜索功能这一块都采用了主流的BM算法。这篇文章会介绍BF、KMP、BM，还有比较简单的Sunday算法，它们的时间复杂度都比 brute-force search 暴力匹配法效率高</div>
 
@@ -386,18 +392,247 @@
 <p>当然，<code>KMP</code>算法可以改进：当模式串中有多个连续重复的元素，<code>next[]</code>就可以优化</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get_next</span><span class="params">(String model, <span class="keyword">int</span> len, <span class="keyword">int</span>[] next)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// i 是模式串的索引，只增不减</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// j 是 next[] 的索引</span></span><br><span class="line">    <span class="keyword">int</span> j = -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 首先给 next[0] 赋值</span></span><br><span class="line">    next[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; len - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 匹配的情况下递增索引 i and j，并给 next[i] 赋值</span></span><br><span class="line">        <span class="keyword">if</span> (j == -<span class="number">1</span> || model.charAt(i) == model.charAt(j)) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            <span class="comment">//==================== 优化处 ======================//</span></span><br><span class="line">            <span class="comment">// 如果当前字符与前缀字符不同，就和没优化前进行相同操作</span></span><br><span class="line">            <span class="keyword">if</span> (model.charAt(i) != model.charAt(j)) &#123;</span><br><span class="line">                next[i] = j;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;    <span class="comment">// 如果当前字符与前缀字符相同</span></span><br><span class="line">                next[i] = next[j];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//==================== 优化处 ======================//</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;  <span class="comment">// 不匹配的话回溯到适当位置</span></span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="BM-算法"><a href="#BM-算法" class="headerlink" title="BM 算法"></a>BM 算法</h3><p><strong>简介</strong>：Boyer-Moor e字符串搜索算法是一种非常高效的字符串搜索算法。它由 Bob Boyer 和 J Strother Moore 设计于1977年。此算法仅对搜索目标字符串（关键字）进行预处理，而非被搜索的字符串。虽然 Boyer-Moore 算法的执行时间同样线性依赖于被搜索字符串的大小，但是通常仅为其它算法的一小部分：它不需要对被搜索的字符串中的字符进行逐一比较，而会跳过其中某些部分。通常搜索关键字越长，算法速度越快</p>
+<h3 id="BM-算法"><a href="#BM-算法" class="headerlink" title="BM 算法"></a>BM 算法</h3><p><strong>简介</strong>：Boyer-Moore 字符串搜索算法是一种非常高效的字符串搜索算法。它由 Bob Boyer 和 J Strother Moore 设计于1977年。此算法仅对搜索目标字符串（关键字）进行预处理，而非被搜索的字符串。虽然 Boyer-Moore 算法的执行时间同样线性依赖于被搜索字符串的大小，但是通常仅为其它算法的一小部分：它不需要对被搜索的字符串中的字符进行逐一比较，而会跳过其中某些部分。通常搜索关键字越长，算法速度越快</p>
 <p><strong>现代许多文本处理器在搜索功能这一块都采用了主流的 BM 算法</strong></p>
 <p>在讲 BM 算法之前，我们用网上常用的例子模仿一下过程</p>
 <blockquote>
 <p>文本串：”HERE IS A SIMPLE EXAMPLE”<br>模式串：”EXAMPLE”</p>
 </blockquote>
-<p>|索引|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23<br>|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|H|E|R|E| |I|S| |A| |S|I|M|P|L|E| |E|X|A|M|P|L|E|<br>|模式串|E|X|A|M|P|L|E|<br>|第一次||||||||E|X|A|M|P|L|E|<br>|第二次||||||||||E|X|A|M|P|L|E|<br>|第三次||||||||||||||||E|X|A|M|P|L|E|<br>|第四次||||||||||||||||||E|X|A|M|P|L|E|</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+<th>11</th>
+<th>12</th>
+<th>13</th>
+<th>14</th>
+<th>15</th>
+<th>16</th>
+<th>17</th>
+<th>18</th>
+<th>19</th>
+<th>20</th>
+<th>21</th>
+<th>22</th>
+<th>23</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>H</td>
+<td>E</td>
+<td>R</td>
+<td>E</td>
+<td></td>
+<td>I</td>
+<td>S</td>
+<td></td>
+<td>A</td>
+<td></td>
+<td>S</td>
+<td>I</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+<td></td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>第一次</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>第二次</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>第三次</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>第四次</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>E</td>
+<td>X</td>
+<td>A</td>
+<td>M</td>
+<td>P</td>
+<td>L</td>
+<td>E</td>
+</tr>
+</tbody></table>
 <p>首先，需要引入两个概念：坏字符规则和好后缀规则</p>
 <h4 id="1）坏字符规则（bad-character-rule）"><a href="#1）坏字符规则（bad-character-rule）" class="headerlink" title="1）坏字符规则（bad character rule）"></a>1）坏字符规则（bad character rule）</h4><blockquote>
 <p>概念：坏字符，就是模式串与文本串在从右向左的匹配过程中，文本串中出现的第一个不与模式串匹配的字符</p>
 </blockquote>
-<p>举个例子：<br>|索引|0|1|2|3|4|5|6|7|<br>|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|c|a|d|b|c|d|<br>|模式串|a|b|d| | | | | |</p>
+<p>举个例子：</p>
+<table>
+<thead>
+<tr>
+<th align="center">索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td align="center">模式串</td>
+<td>a</td>
+<td>b</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>如上表格所示，文本串的第 2 为字符<code>c</code>就叫做坏字符，不考虑好后缀的情况下，可以直接把模式串后移到文本串第 3 位，如下所示</p>
 <table>
 <thead>
@@ -526,7 +761,47 @@
 <h4 id="2）好后缀规则（good-suffix-shift）"><a href="#2）好后缀规则（good-suffix-shift）" class="headerlink" title="2）好后缀规则（good suffix shift）"></a>2）好后缀规则（good suffix shift）</h4><blockquote>
 <p>概念：好后缀，就是模式串与文本串在从右向左的匹配过程中，文本串中与模式串匹配的部分</p>
 </blockquote>
-<p>例如：<br>|索引|0|1|2|3|4|5|6|7|8|<br>|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|c|a|d|b|c|d|e|<br>|模式串|a|d|c|a|d| | | |</p>
+<p>例如：</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td>a</td>
+<td>d</td>
+<td>c</td>
+<td>a</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>匹配部分<code>&quot;ad&quot;</code>就叫做好后缀，我们好后缀<code>&quot;ad&quot;</code>，在模式串中搜索是否有第二个匹配部分<code>&quot;ad&quot;&#39;</code>，如果有，便移动模式串中另一个匹配部分与文本串中的好后缀对其，如下</p>
 <table>
 <thead>
@@ -656,7 +931,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 生成好后缀数组 gs[]</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> gs 好后缀数组</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateGS</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] gs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] suffix = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">    generateSuffix(pattern, len, suffix);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三种情况</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        gs[i] = len;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第二种情况</span></span><br><span class="line">    <span class="comment">/* 从右向左扫描，确保模式串移动距离最少 */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">if</span> (suffix[i] == i + <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">                <span class="comment">// 确保 gs[j] 只被修改一次</span></span><br><span class="line">                <span class="keyword">if</span> (gs[j] == len) &#123;</span><br><span class="line">                    gs[j] = len - <span class="number">1</span> - i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一种情况</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        gs[len - <span class="number">1</span> - suffix[i]] = len - <span class="number">1</span> - i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h5><p>求得了坏字符数组和好后缀数组，接下来，每次不匹配时移动的距离就取两个中最大的一个即可</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ASCII 码表的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成坏字符数组 bc[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bc 生成的坏字符数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateBC</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] bc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">            bc[i] = -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            bc[pattern.charAt(i)] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成 suffix[] 数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> suffix</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateSuffix</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] suffix)</span> </span>&#123;</span><br><span class="line">        suffix[len - <span class="number">1</span>] = len;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">int</span> index = i;</span><br><span class="line">            <span class="keyword">while</span> (index &gt;= <span class="number">0</span> &amp;&amp; pattern.charAt(index) == pattern.charAt(len - <span class="number">1</span> + index - i)) &#123;</span><br><span class="line">                index--;</span><br><span class="line">            &#125;</span><br><span class="line">            suffix[i] = i - index;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成好后缀数组 gs[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> gs 好后缀数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateGS</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] gs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] suffix = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">        generateSuffix(pattern, len, suffix);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            gs[i] = len;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 第二种情况</span></span><br><span class="line">        <span class="comment">/* 从右向左扫描，确保模式串移动距离最少 */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (suffix[i] == i + <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">                    <span class="comment">// 确保 gs[j] 只被修改一次</span></span><br><span class="line">                    <span class="keyword">if</span> (gs[j] == len) &#123;</span><br><span class="line">                        gs[j] = len - <span class="number">1</span> - i;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            gs[len - <span class="number">1</span> - suffix[i]] = len - <span class="number">1</span> - i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">        <span class="keyword">int</span> ptnLen = needle.length();</span><br><span class="line">        <span class="keyword">if</span> (ptnLen == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bc = <span class="keyword">new</span> <span class="keyword">int</span>[SIZE];</span><br><span class="line">        <span class="keyword">int</span>[] gs = <span class="keyword">new</span> <span class="keyword">int</span>[ptnLen];</span><br><span class="line">        generateBC(needle, ptnLen, bc);</span><br><span class="line">        generateGS(needle, ptnLen, gs);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len - ptnLen) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = ptnLen - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; needle.charAt(j) == haystack.charAt(i + j)) &#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 选择移动距离最大者</span></span><br><span class="line">            i += Math.max(bc[haystack.charAt(i + j)] - len + <span class="number">1</span> + j, gs[j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ASCII 码表的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成坏字符数组 bc[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bc 生成的坏字符数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串的长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateBC</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] bc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">            bc[i] = -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            bc[pattern.charAt(i)] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成 suffix[] 数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> suffix</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateSuffix</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] suffix)</span> </span>&#123;</span><br><span class="line">        suffix[len - <span class="number">1</span>] = len;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">int</span> index = i;</span><br><span class="line">            <span class="keyword">while</span> (index &gt;= <span class="number">0</span> &amp;&amp; pattern.charAt(index) == pattern.charAt(len - <span class="number">1</span> + index - i)) &#123;</span><br><span class="line">                index--;</span><br><span class="line">            &#125;</span><br><span class="line">            suffix[i] = i - index;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成好后缀数组 gs[]</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pattern 模式串</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> len 模式串长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> gs 好后缀数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateGS</span><span class="params">(String pattern, <span class="keyword">int</span> len, <span class="keyword">int</span>[] gs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] suffix = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">        generateSuffix(pattern, len, suffix);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            gs[i] = len;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 第二种情况</span></span><br><span class="line">        <span class="comment">/* 从右向左扫描，确保模式串移动距离最少 */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (suffix[i] == i + <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">                    <span class="comment">// 确保 gs[j] 只被修改一次</span></span><br><span class="line">                    <span class="keyword">if</span> (gs[j] == len) &#123;</span><br><span class="line">                        gs[j] = len - <span class="number">1</span> - i;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一种情况</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            gs[len - <span class="number">1</span> - suffix[i]] = len - <span class="number">1</span> - i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">        <span class="keyword">int</span> ptnLen = needle.length();</span><br><span class="line">        <span class="keyword">if</span> (ptnLen == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bc = <span class="keyword">new</span> <span class="keyword">int</span>[SIZE];</span><br><span class="line">        <span class="keyword">int</span>[] gs = <span class="keyword">new</span> <span class="keyword">int</span>[ptnLen];</span><br><span class="line">        generateBC(needle, ptnLen, bc);</span><br><span class="line">        generateGS(needle, ptnLen, gs);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len - ptnLen) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = ptnLen - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; needle.charAt(j) == haystack.charAt(i + j)) &#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">            i += Math.max(j - bc[haystack.charAt(i + j)], gs[j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>算法分析：</p>
 <ul>
 <li>时间复杂度：O(n / m)</li>
@@ -665,15 +940,180 @@
 <h3 id="Sunday-算法"><a href="#Sunday-算法" class="headerlink" title="Sunday 算法"></a>Sunday 算法</h3><p><strong>简介</strong>：Sunday 算法是 Daniel M.Sunday 于 1990 年提出的字符串模式匹配。其核心思想是：在匹配过程中，模式串发现不匹配时，算法能跳过尽可能多的字符以进行下一步的匹配，从而提高了匹配效率</p>
 <p>与 BM 算法不同的是，Sunday 算法是从前往后匹配</p>
 <p>当发现文本串与模式串不匹配时，关注的是文本串中参加匹配的字符串末位的下一位，这是得分两种情况</p>
-<h4 id="CASE-1：该位字符没出现模式串中"><a href="#CASE-1：该位字符没出现模式串中" class="headerlink" title="CASE 1：该位字符没出现模式串中"></a>CASE 1：该位字符没出现模式串中</h4><p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d<br>|模式串|a|b|c|d| | | | |</p>
+<h4 id="CASE-1：该位字符没出现模式串中"><a href="#CASE-1：该位字符没出现模式串中" class="headerlink" title="CASE 1：该位字符没出现模式串中"></a>CASE 1：该位字符没出现模式串中</h4><table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>e</td>
+<td>a</td>
+<td>e</td>
+<td>b</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>我们从头开始匹配，在索引<code>2</code>处，发现文本串与模式串不匹配，那么我们关注的就是文本串的索引<code>4</code>处的字符<code>e</code></p>
 <p>很显然，<code>e</code>并没有在模式串中出现，所以我们把模式串整体后移<code>4</code>位，得到</p>
-<p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d|<br>|模式串| | | | |a|b|c|d| | |</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>e</td>
+<td>a</td>
+<td>e</td>
+<td>b</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <h4 id="CASE-2：该位字符出现在模式串中"><a href="#CASE-2：该位字符出现在模式串中" class="headerlink" title="CASE 2：该位字符出现在模式串中"></a>CASE 2：该位字符出现在模式串中</h4><p>继续上一个例子，我们发现，移动后得模式串还是不能与文本串匹配，这是我们关注文本串索引<code>8</code>处的字符<code>c</code>，发现其在模式串中出现了</p>
 <p>于是，我们以如下方式移动模式串</p>
-<p>|索引|0|1|2|3|4|5|6|7|8|9|<br>|-|-|-|-|-|-|-|-|-|-|-|-|<br>|文本串|a|b|e|a|e|b|a|b|c|d|<br>|模式串| | | | | | |a|b|c|d|</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文本串</td>
+<td>a</td>
+<td>b</td>
+<td>e</td>
+<td>a</td>
+<td>e</td>
+<td>b</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+<tr>
+<td>模式串</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+</tr>
+</tbody></table>
 <p>很显然，此时已经完成了匹配</p>
-<h4 id="算法实现-1"><a href="#算法实现-1" class="headerlink" title="算法实现"></a>算法实现</h4><p>以模式串<code>abcdab</code>为例，逐个列出其每一个对应字符匹配时需要移动的距离<br>|索引|字符|移动距离|<br>|:-:|:-:|:-:|<br>|0|a|6|<br>|1|b|5|<br>|2|c|4|<br>|3|d|3|<br>|4|a|2|<br>|5|b|1|</p>
+<h4 id="算法实现-1"><a href="#算法实现-1" class="headerlink" title="算法实现"></a>算法实现</h4><p>以模式串<code>abcdab</code>为例，逐个列出其每一个对应字符匹配时需要移动的距离</p>
+<table>
+<thead>
+<tr>
+<th align="center">索引</th>
+<th align="center">字符</th>
+<th align="center">移动距离</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">a</td>
+<td align="center">6</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">b</td>
+<td align="center">5</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">c</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">d</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">a</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">b</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
 <p>可以看出，若是有重复元素应该取后出现的，所以应该从头遍历模式串，就比如<code>a</code>、<code>b</code>应该去覆盖后的值<code>2</code>、<code>1</code></p>
 <p><strong>代码如下</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = haystack.length();</span><br><span class="line">        <span class="keyword">int</span> ptnLen = needle.length();</span><br><span class="line">        <span class="keyword">if</span> (ptnLen == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 移动步长数组 sunday[]</span></span><br><span class="line">        <span class="keyword">int</span>[] sunday = <span class="keyword">new</span> <span class="keyword">int</span>[SIZE];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SIZE; i++) &#123;</span><br><span class="line">            sunday[i] = ptnLen + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ptnLen; i++) &#123;</span><br><span class="line">            sunday[needle.charAt(i)] = ptnLen - i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len - ptnLen) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (j &lt; ptnLen &amp;&amp; haystack.charAt(i + j) == needle.charAt(j)) &#123;</span><br><span class="line">                j++;</span><br><span class="line">                <span class="keyword">if</span> (j == ptnLen) &#123;</span><br><span class="line">                    <span class="keyword">return</span> i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 判断是否越界</span></span><br><span class="line">            <span class="keyword">if</span> (i + ptnLen &gt;= len) &#123;</span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 移动模式串</span></span><br><span class="line">            i += sunday[haystack.charAt(i + ptnLen)];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -731,7 +1171,10 @@
     <a href="/2020/02/03/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%BA%8C%EF%BC%89/" rel="prev" title="LeetCode算法经典题集（二）">
       <i class="fa fa-chevron-left"></i> LeetCode算法经典题集（二）
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/11/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%B8%89%EF%BC%89/" rel="next" title="LeetCode算法经典题集（三）">
+      LeetCode算法经典题集（三） <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -808,20 +1251,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">44</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -834,10 +1277,10 @@
         <a href="mailto:nopeyeply@gmail.com" title="E-Mail → mailto:nopeyeply@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://weibo.com/hasakiwa" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;hasakiwa" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+        <a href="https://space.bilibili.com/215912773" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;215912773" rel="noopener" target="_blank"><i class="fa fa-fw fa-youtube"></i>Bilibili</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://twitter.com/yourname" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+        <a href="https://twitter.com/Nope98687797" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Nope98687797" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
       </span>
   </div>
 
@@ -850,6 +1293,9 @@
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
           <a href="https://www.v0n.top/" title="https:&#x2F;&#x2F;www.v0n.top" rel="noopener" target="_blank">VonLYC's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsbfdzz.github.io/" title="https:&#x2F;&#x2F;wsbfdzz.github.io&#x2F;" rel="noopener" target="_blank">小雨时宁的游戏小屋</a>
         </li>
     </ul>
   </div>
@@ -871,7 +1317,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -881,13 +1327,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">154k</span>
+    <span title="站点总字数">234k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:20</span>
+    <span title="站点阅读时长">3:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
   </div>
@@ -929,9 +1375,7 @@
   </div>
 
   
-  
-  <script color='139,137,137' opacity='0.9' zIndex='-1' count='199' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
-  <script size="300" alpha="0.45" zIndex="0.5" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script size="300" alpha="0.25" zIndex="0.3" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>

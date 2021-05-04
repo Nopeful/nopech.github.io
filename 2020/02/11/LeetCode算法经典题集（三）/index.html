@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="iu-ykheNwy2kfIqgo-3ZSczJ1NJ1oDbvYaCmUSTXZuE">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="LeetCode算法经典题集（三），算法题题号：32、33、34、36、37，包含了回溯法、二分查找法、动态规划、位运算，其中 37 题是很经典的回溯题（有关数独的问题），36、37 两道题运用了位运算来节省空间，是个小技巧，运行效率也快">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode算法经典题集（三）">
+<meta property="og:url" content="http://yoursite.com/2020/02/11/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="Nopech&#39;s Blog">
+<meta property="og:description" content="LeetCode算法经典题集（三），算法题题号：32、33、34、36、37，包含了回溯法、二分查找法、动态规划、位运算，其中 37 题是很经典的回溯题（有关数独的问题），36、37 两道题运用了位运算来节省空间，是个小技巧，运行效率也快">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/31_dp.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/36_1.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/36_2.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/37_1.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/37_2.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/37_3.png">
+<meta property="article:published_time" content="2020-02-11T13:50:43.000Z">
+<meta property="article:modified_time" content="2021-05-03T16:46:53.201Z">
+<meta property="article:author" content="Nopech">
+<meta property="article:tag" content="二分查找法">
+<meta property="article:tag" content="动态规划">
+<meta property="article:tag" content="回溯法">
+<meta property="article:tag" content="位运算">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/img/leetcode/31_dp.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/11/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%B8%89%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>LeetCode算法经典题集（三） | Nopech's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nopech's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-outlook">
+
+    <a href="/mypage/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>总览</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/Nopeful" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%B8%89%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/myavatar.png">
+      <meta itemprop="name" content="Nopech">
+      <meta itemprop="description" content="Thinking and coding.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nopech's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LeetCode算法经典题集（三）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-11 21:50:43" itemprop="dateCreated datePublished" datetime="2020-02-11T21:50:43+08:00">2020-02-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 00:46:53" itemprop="dateModified" datetime="2021-05-04T00:46:53+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+            <div class="post-description">LeetCode算法经典题集（三），算法题题号：32、33、34、36、37，包含了回溯法、二分查找法、动态规划、位运算，其中 37 题是很经典的回溯题（有关数独的问题），36、37 两道题运用了位运算来节省空间，是个小技巧，运行效率也快</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="标注"><a href="#标注" class="headerlink" title="标注"></a>标注</h1><p><strong>来源：力扣（<em>LeetCode</em>）</strong><br><strong>链接：<a href="https://leetcode-cn.com/problemset/algorithms/" target="_blank" rel="noopener">https://leetcode-cn.com/problemset/algorithms/</a></strong><br><strong>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</strong></p>
+<h1 id="32-最长有效括号（动态规划）"><a href="#32-最长有效括号（动态规划）" class="headerlink" title="32.最长有效括号（动态规划）"></a>32.最长有效括号（动态规划）</h1><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>给定一个只包含 ‘(‘ 和 ‘)’ 的字符串，找出最长的包含有效括号的子串的长度。</p>
+<p>示例 1:</p>
+<blockquote>
+<p>输入: “(()”<br>输出: 2<br>解释: 最长有效括号子串为 “()”</p>
+</blockquote>
+<p>示例 2:</p>
+<blockquote>
+<p>输入: “)()())”<br>输出: 4<br>解释: 最长有效括号子串为 “()()”</p>
+</blockquote>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><h3 id="暴力法"><a href="#暴力法" class="headerlink" title="暴力法"></a>暴力法</h3><p>遍历字符串，若是遇到左括号<code>&#39;(&#39;</code>就进入另一层循环<code>while</code>，开始计算最大长度</p>
+<p>这里设置两个参数来统计左右括号数量</p>
+<blockquote>
+<p>left：左括号数目<br>right：右括号数目</p>
+</blockquote>
+<p>每当<code>left == right</code>时，尝试更新最大长度</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = s.length();</span><br><span class="line">    <span class="keyword">if</span> (len == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> index = i + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> left = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> right = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (index &lt; len) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.charAt(index) == <span class="string">'('</span>) &#123;</span><br><span class="line">                    left++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    right++;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (right &gt; left) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">                    ans = Math.max(ans, left * <span class="number">2</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                index++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n<sup>2</sup>)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h3><p>首先，定义一个<code>dp[]</code>数组，其中第 <code>dp[i]</code> 个元素表示以下标<code>i</code>为结尾的最长有效子串的长度</p>
+<blockquote>
+<p><code>dp[]</code>数组全部初始化为0</p>
+</blockquote>
+<p>很明显，有效子串的结尾一定是右括号<code>&#39;)&#39;</code></p>
+<p>这就可以推出：以左括号<code>&#39;(&#39;</code>结尾的子串对应的<code>dp[i] = 0</code></p>
+<p>所以我们只需要更新右括号<code>&#39;)&#39;</code>在数组<code>dp[]</code>中对应位置的值</p>
+<p>接下来需要找出<code>dp[i]</code>的递推式</p>
+<ol>
+<li>若<code>s[i] == &#39;)&#39;</code>且<code>s[i - 1] == &#39;(&#39;</code>，即子串形如<code>&quot;...()&quot;</code><br><code>dp[i] = 2 + dp[i - 2]</code></li>
+<li>若<code>s[i] == &#39;)&#39;</code>且<code>s[i - 1] == &#39;)&#39;</code>，即子串形如<code>&quot;...))&quot;</code>，可以得出<ul>
+<li>如果满足<code>s[i - 1 - dp[i - 1]] == &#39;(&#39;</code></li>
+<li>那么有<code>dp[i] = 2 + dp[i - 1] + dp[i - 2 - dp[i - 1]]</code></li>
+</ul>
+</li>
+</ol>
+<p>这里用图片解释一下第二点，一目了然<br><img src="/img/leetcode/31_dp.png"></p>
+<p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> maxans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> dp[] = <span class="keyword">new</span> <span class="keyword">int</span>[s.length()];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.charAt(i) == <span class="string">')'</span>) &#123;</span><br><span class="line">            <span class="comment">// 情况 1</span></span><br><span class="line">            <span class="keyword">if</span> (s.charAt(i - <span class="number">1</span>) == <span class="string">'('</span>) &#123;</span><br><span class="line">                <span class="comment">// 防止越界</span></span><br><span class="line">                dp[i] = (i &gt;= <span class="number">2</span> ? dp[i - <span class="number">2</span>] : <span class="number">0</span>) + <span class="number">2</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (i - dp[i - <span class="number">1</span>] &gt; <span class="number">0</span> &amp;&amp; s.charAt(i - dp[i - <span class="number">1</span>] - <span class="number">1</span>) == <span class="string">'('</span>) &#123;</span><br><span class="line">                <span class="comment">// 情况 2</span></span><br><span class="line">                dp[i] = dp[i - <span class="number">1</span>] + ((i - dp[i - <span class="number">1</span>]) &gt;= <span class="number">2</span> ? dp[i - dp[i - <span class="number">1</span>] - <span class="number">2</span>] : <span class="number">0</span>) + <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            maxLen = Math.max(maxLen, dp[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxLen;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n)</li>
+<li>空间复杂度：O(n)</li>
+</ul>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>针对该题，可以构造一个栈，在遍历给定字符串的过程中去判断到目前为止扫描的子字符串的有效性，首先将 <code>−1</code> 放入栈顶。</p>
+<ul>
+<li>对于遇到的每个<code>&#39;(&#39;</code>，将它的下标放入栈中</li>
+<li>对于遇到的每个<code>&#39;)&#39;</code>，弹出栈顶的元素，并将当前元素的下标与弹出元素下标作差，得出当前有效括号字符串的长度</li>
+</ul>
+<p>通过这种方法，我们继续计算有效子字符串的长度，并最终返回最长有效子字符串的长度</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> maxans = <span class="number">0</span>;</span><br><span class="line">    Stack&lt;Integer&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">    stack.push(-<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">            stack.push(i);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            stack.pop();</span><br><span class="line">            <span class="comment">// 这步比较巧妙，栈空时把对应右括号下标压栈</span></span><br><span class="line">            <span class="keyword">if</span> (stack.empty()) &#123;</span><br><span class="line">                stack.push(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                maxans = Math.max(maxans, i - stack.peek());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="一次遍历"><a href="#一次遍历" class="headerlink" title="一次遍历"></a>一次遍历</h3><p>该方法设置了两个计数器：<code>left</code>和<code>right</code>，然后分两步</p>
+<ul>
+<li>从左到右遍历字符串，对于遇到的每个左括号<code>(</code>，增加 <code>left</code> 计算器，对于遇到的每个右括号<code>)</code>，我们增加 <code>right</code> 计数器。每当 <code>left</code> 计数器与 <code>right</code> 计数器相等时，计算当前有效字符串的长度，并且记录目前为止找到的最长子字符串。如果 <code>right</code> 计数器比 <code>left</code> 计数器大时，我们将 <code>left</code> 和 <code>right</code> 计数器同时变回 <code>0</code></li>
+<li>再重置计数器，从右到左做类似操作</li>
+</ul>
+<p>简单解释一下为什么要反方向做类似操作</p>
+<blockquote>
+<p>整个括号串中，要么只多余左括号，要么只多余右括号</p>
+</blockquote>
+<p>以<code>((())</code>为例，从左向右统计</p>
+<blockquote>
+<p><code>left = 3</code><br><code>right = 2</code><br><code>maxLen = 0</code></p>
+</blockquote>
+<p>而从右向左的话</p>
+<blockquote>
+<p><code>right = 2</code><br><code>left = 3</code><br><code>maxLen = 2</code></p>
+</blockquote>
+<p>就不会遗漏情况，下面是代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestValidParentheses</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>, maxlength = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">            left++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">            maxlength = Math.max(maxlength, <span class="number">2</span> * right);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (right &gt;= left) &#123;</span><br><span class="line">            left = right = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    left = right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.charAt(i) == <span class="string">'('</span>) &#123;</span><br><span class="line">            left++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            right++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (left == right) &#123;</span><br><span class="line">            maxlength = Math.max(maxlength, <span class="number">2</span> * left);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (left &gt;= right) &#123;</span><br><span class="line">            left = right = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxlength;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h1 id="33-搜索旋转排序数组（二分查找）"><a href="#33-搜索旋转排序数组（二分查找）" class="headerlink" title="33.搜索旋转排序数组（二分查找）"></a>33.搜索旋转排序数组（二分查找）</h1><h2 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h2><p>假设按照升序排序的数组在预先未知的某个点上进行了旋转。</p>
+<p>( 例如，数组 <code>[0,1,2,4,5,6,7]</code> 可能变为 <code>[4,5,6,7,0,1,2]</code> )。</p>
+<p>搜索一个给定的目标值，如果数组中存在这个目标值，则返回它的索引，否则返回 <code>-1</code> 。</p>
+<p>你可以假设数组中不存在重复的元素。</p>
+<p>你的算法时间复杂度必须是 <code>O(log n)</code> 级别。</p>
+<p>示例 1:</p>
+<blockquote>
+<p>输入: nums = [4,5,6,7,0,1,2], target = 0<br>输出: 4</p>
+</blockquote>
+<p>示例 2:</p>
+<blockquote>
+<p>输入: nums = [4,5,6,7,0,1,2], target = 3<br>输出: -1</p>
+</blockquote>
+<h2 id="题解-1"><a href="#题解-1" class="headerlink" title="题解"></a>题解</h2><p>这题就是普通的搜索，但是要求算法时间复杂度必须是 O(log<sub>2</sub>n)</p>
+<p>这很明显是要用二分查找法降低复杂度，但显然常规的二分查找法是不行的，这里就需要先用二分法找到旋转中心</p>
+<p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 找出数组的旋转点的坐标</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">findRotateIndex</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 最左边的元素小于最右边的元素，说明数组没有被旋转过</span></span><br><span class="line">    <span class="keyword">if</span> (nums[left] &lt; nums[right]) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> pivot = (left + right) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 说明找到旋转点了</span></span><br><span class="line">        <span class="keyword">if</span> (nums[pivot] &gt; nums[pivot + <span class="number">1</span>]) &#123;</span><br><span class="line">            <span class="keyword">return</span> pivot + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[pivot] &lt; nums[left]) &#123;</span><br><span class="line">                right = pivot - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = pivot + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 常规的二分查找</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(<span class="keyword">int</span> nums[], <span class="keyword">int</span> target, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> pivot = (left + right) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[pivot] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> pivot;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (target &lt; nums[pivot]) &#123;</span><br><span class="line">                right = pivot - <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = pivot + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.length;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> nums[<span class="number">0</span>] == target ? <span class="number">0</span> : -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> rotateIndex = findRotateIndex(nums, <span class="number">0</span>, n - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// target 恰好是旋转点</span></span><br><span class="line">    <span class="keyword">if</span> (nums[rotateIndex] == target) &#123;</span><br><span class="line">        <span class="keyword">return</span> rotateIndex;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 数组没有旋转过</span></span><br><span class="line">    <span class="keyword">if</span> (rotateIndex == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> search(nums, target, <span class="number">0</span>, n - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 目标值小于第一位的值，就应该查找右部分</span></span><br><span class="line">    <span class="keyword">if</span> (target &lt; nums[<span class="number">0</span>]) &#123;</span><br><span class="line">        <span class="keyword">return</span> search(nums, target, rotateIndex, n - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 查找左部分</span></span><br><span class="line">    <span class="keyword">return</span> search(nums, target, <span class="number">0</span>, rotateIndex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(log n)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h1 id="34-在排序数组中查找元素的第一个和最后一个位置"><a href="#34-在排序数组中查找元素的第一个和最后一个位置" class="headerlink" title="34.在排序数组中查找元素的第一个和最后一个位置"></a>34.在排序数组中查找元素的第一个和最后一个位置</h1><h2 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h2><p>给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。</p>
+<p>你的算法时间复杂度必须是 O(log n) 级别。</p>
+<p>如果数组中不存在目标值，返回 [-1, -1]。</p>
+<p>示例 1:</p>
+<p>输入: nums = [5,7,7,8,8,10], target = 8<br>输出: [3,4]<br>示例 2:</p>
+<p>输入: nums = [5,7,7,8,8,10], target = 6<br>输出: [-1,-1]</p>
+<h2 id="题解-2"><a href="#题解-2" class="headerlink" title="题解"></a>题解</h2><h3 id="循环二分查找"><a href="#循环二分查找" class="headerlink" title="循环二分查找"></a>循环二分查找</h3><p>这是我自己的做法，在题库上运行时间击败了<code>100%</code>的用户（😉）</p>
+<p>先写一个常规的二分查找函数<code>search</code></p>
+<p>接着初次查找<code>pivot</code>，如果返回<code>-1</code>，直接<code>return</code></p>
+<p>设置两个标识<code>start</code>和<code>end</code></p>
+<p>令<code>start = end = pivot</code></p>
+<p>然后，分两部分查找</p>
+<p><code>start</code>和<code>end</code>分别作为接下来查找的右、左边界</p>
+<ul>
+<li>对左部分右边界<code>start</code>递减进行二分查找</li>
+<li>对右部分左边界<code>end</code>递增进行二分查找</li>
+</ul>
+<p>完整代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(<span class="keyword">int</span> nums[], <span class="keyword">int</span> target, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> pivot = (left + right) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[pivot] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> pivot;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[pivot] &lt; target) &#123;</span><br><span class="line">            left = pivot + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            right = pivot - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] searchRange(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">    <span class="keyword">int</span>[] result = &#123;-<span class="number">1</span>, -<span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> pivot = search(nums, target, left, right);</span><br><span class="line">    <span class="keyword">if</span> (pivot == -<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> start, end;</span><br><span class="line">    start = end = pivot;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        start = search(nums, target, left, start);</span><br><span class="line">        <span class="keyword">if</span> (start == -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        result[<span class="number">0</span>] = start;</span><br><span class="line">        start--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        end = search(nums, target, end, right);</span><br><span class="line">        <span class="keyword">if</span> (end == -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        result[<span class="number">1</span>] = end;</span><br><span class="line">        end++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(n * log n)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="官方答案"><a href="#官方答案" class="headerlink" title="官方答案"></a>官方答案</h3><p>参考链接：<a href="https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/solution/zai-pai-xu-shu-zu-zhong-cha-zhao-yuan-su-de-di-yi-/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/solution/zai-pai-xu-shu-zu-zhong-cha-zhao-yuan-su-de-di-yi-/</a></p>
+<p><strong>代码详解见链接</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">// returns leftmost (or rightmost) index at which `target` should be</span></span><br><span class="line">    <span class="comment">// inserted in sorted array `nums` via binary search.</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">extremeInsertionIndex</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target, <span class="keyword">boolean</span> left)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lo = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> hi = nums.length;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (lo &lt; hi) &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = (lo + hi) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &gt; target || (left &amp;&amp; target == nums[mid])) &#123;</span><br><span class="line">                hi = mid;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                lo = mid+<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> lo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] searchRange(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="keyword">int</span>[] targetRange = &#123;-<span class="number">1</span>, -<span class="number">1</span>&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> leftIdx = extremeInsertionIndex(nums, target, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// assert that `leftIdx` is within the array bounds and that `target`</span></span><br><span class="line">        <span class="comment">// is actually in `nums`.</span></span><br><span class="line">        <span class="keyword">if</span> (leftIdx == nums.length || nums[leftIdx] != target) &#123;</span><br><span class="line">            <span class="keyword">return</span> targetRange;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        targetRange[<span class="number">0</span>] = leftIdx;</span><br><span class="line">        targetRange[<span class="number">1</span>] = extremeInsertionIndex(nums, target, <span class="keyword">false</span>)-<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> targetRange;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(log n)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h1 id="36-有效的数独（位运算）"><a href="#36-有效的数独（位运算）" class="headerlink" title="36.有效的数独（位运算）"></a>36.有效的数独（位运算）</h1><h2 id="题目-3"><a href="#题目-3" class="headerlink" title="题目"></a>题目</h2><p>判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。</p>
+<ol>
+<li>数字 1-9 在每一行只能出现一次。</li>
+<li>数字 1-9 在每一列只能出现一次。</li>
+<li>数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。</li>
+</ol>
+<img src="/img/leetcode/36_1.png">
+
+<h2 id="题解-3"><a href="#题解-3" class="headerlink" title="题解"></a>题解</h2><h3 id="一次迭代"><a href="#一次迭代" class="headerlink" title="一次迭代"></a>一次迭代</h3><p><strong>代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isValidSudoku</span><span class="params">(<span class="keyword">char</span>[][] board)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// init data</span></span><br><span class="line">    HashMap&lt;Integer, Integer&gt;[] rows = <span class="keyword">new</span> HashMap[<span class="number">9</span>];</span><br><span class="line">    HashMap&lt;Integer, Integer&gt;[] columns = <span class="keyword">new</span> HashMap[<span class="number">9</span>];</span><br><span class="line">    HashMap&lt;Integer, Integer&gt;[] boxes = <span class="keyword">new</span> HashMap[<span class="number">9</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">9</span>; i++) &#123;</span><br><span class="line">        rows[i] = <span class="keyword">new</span> HashMap&lt;Integer, Integer&gt;();</span><br><span class="line">        columns[i] = <span class="keyword">new</span> HashMap&lt;Integer, Integer&gt;();</span><br><span class="line">        boxes[i] = <span class="keyword">new</span> HashMap&lt;Integer, Integer&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// validate a board</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">9</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">9</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">char</span> num = board[i][j];</span><br><span class="line">            <span class="keyword">if</span> (num != <span class="string">'.'</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> n = (<span class="keyword">int</span>)num;</span><br><span class="line">                <span class="keyword">int</span> box_index = (i / <span class="number">3</span> ) * <span class="number">3</span> + j / <span class="number">3</span>;</span><br><span class="line">                <span class="comment">// keep the current cell value</span></span><br><span class="line">                rows[i].put(n, rows[i].getOrDefault(n, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">                columns[j].put(n, columns[j].getOrDefault(n, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">                boxes[box_index].put(n, boxes[box_index].getOrDefault(n, <span class="number">0</span>) + <span class="number">1</span>);</span><br><span class="line">                <span class="comment">// check if this value has been already seen before</span></span><br><span class="line">                <span class="keyword">if</span> (rows[i].get(n) &gt; <span class="number">1</span> || columns[j].get(n) &gt; <span class="number">1</span> || boxes[box_index].get(n) &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(9<sup>2</sup>)</li>
+<li>空间复杂度：O(9 * 3)</li>
+</ul>
+<h3 id="通过位运算判重（✔）"><a href="#通过位运算判重（✔）" class="headerlink" title="通过位运算判重（✔）"></a>通过位运算判重（✔）</h3><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>为了省空间，我们只设置一个<code>int</code>型数组<code>store[]</code>来存放遍历的结果</p>
+<p>假设遍历索引为<code>for_i</code> 与 <code>for_j</code>，那么<code>board[i][j]</code>可以对应三个内容</p>
+<ol>
+<li>第<code>i</code>行的元素</li>
+<li>第<code>j</code>列的元素</li>
+<li>第<code>i / 3 * 3 + j / 3</code>个九宫格的元素</li>
+</ol>
+<p>解释一下第 3 点</p>
+<img src="/img/leetcode/36_2.png">
+
+<blockquote>
+<p>如图，很清楚大九宫格被分为了 0 ~ 8 八个区域<br>由于<code>i</code>是<code>int</code>型的，所以<code>i / 3</code>只有<code>0、1、2</code>三个取值<br><code>i / 3 * 3</code>就对应了<code>0、3、6</code>三个区域<br>再加上<code>j / 3</code>，即精确到了各个小九宫格</p>
+</blockquote>
+<p>在存储时，先定义一个变量<code>value</code></p>
+<p><code>int</code>型整数是<code>32</code>位的，我们取其后<code>27</code>位来存放元素</p>
+<ol>
+<li>末尾<code>9</code>位存放每个元素的行号</li>
+<li>中间<code>9</code>位存放每个元素的列号</li>
+<li>首部<code>9</code>位存放每个元素对应的九宫格的序号</li>
+</ol>
+<blockquote>
+<p>这里是通过<code>1 &lt;&lt; x</code>来实现位存储的<br>代表<code>1</code>的二进制<code>01</code>向前移动<code>x</code>位<br>比如<code>1 &lt;&lt; 2</code>结果为<code>4</code>，因为<code>01</code>变成了<code>0100</code></p>
+</blockquote>
+<p>然后得出的<code>value</code>与对应的<code>store[index]</code>相与，相与结果为<code>0</code>，说明没有重复过</p>
+<p>简单提一下与<code>&amp;</code>操作，以<code>6</code>与<code>15</code>为例</p>
+<p><code>6</code>的二进制为<code>0110</code><br><code>15</code>的二进制为<code>1111</code></p>
+<p>首先需要知道</p>
+<blockquote>
+<ul>
+<li><code>1 &amp; 1 = 1</code></li>
+<li><code>1 &amp; 0 = 0</code></li>
+</ul>
+</blockquote>
+<p>从而<code>6 &amp; 15</code> 就相当于 <code>0110 &amp; 1111 = 0110</code></p>
+<table>
+<thead>
+<tr>
+<th align="right">位数</th>
+<th>3</th>
+<th>2</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right"></td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td align="right">&amp;</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td align="right">结果</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isValidSudoku</span><span class="params">(<span class="keyword">char</span>[][] board)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] store = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">9</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">9</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">9</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span>(board[i][j] != <span class="string">'.'</span>) &#123;</span><br><span class="line">                <span class="comment">// board[i][j] - '1' 保证索引范围在 0 ~ 8 不会越界</span></span><br><span class="line">                <span class="keyword">int</span> index = board[i][j] - <span class="string">'1'</span>;</span><br><span class="line">                <span class="comment">// 通过位运算存储数值</span></span><br><span class="line">                <span class="keyword">int</span> value = (<span class="number">1</span> &lt;&lt; i)    <span class="comment">// 末尾九位存放行号</span></span><br><span class="line">                        | (<span class="number">1</span> &lt;&lt; (j + <span class="number">9</span>))    <span class="comment">// 中间九位存放列号</span></span><br><span class="line">                        | (<span class="number">1</span> &lt;&lt; (i / <span class="number">3</span> * <span class="number">3</span> + j / <span class="number">3</span> + <span class="number">18</span>));  <span class="comment">// 首部九位存放九宫格序号</span></span><br><span class="line">                <span class="keyword">int</span> pre = store[index];</span><br><span class="line">                <span class="comment">// 两者相与若为0，说明结果没有重复过</span></span><br><span class="line">                <span class="keyword">if</span> ((pre &amp; value) == <span class="number">0</span>) &#123;</span><br><span class="line">                    store[index] = pre | value;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;   <span class="comment">// 不为 0 则说明重复了</span></span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O(9<sup>1</sup>)</li>
+<li>空间复杂度：O(9)</li>
+</ul>
+<h1 id="37-解数独（回溯法）"><a href="#37-解数独（回溯法）" class="headerlink" title="37.解数独（回溯法）"></a>37.解数独（回溯法）</h1><h2 id="题目-4"><a href="#题目-4" class="headerlink" title="题目"></a>题目</h2><p>编写一个程序，通过已填充的空格来解决数独问题。</p>
+<p>一个数独的解法需遵循如下规则：</p>
+<ol>
+<li>数字 1-9 在每一行只能出现一次。</li>
+<li>数字 1-9 在每一列只能出现一次。</li>
+<li>数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。</li>
+</ol>
+<h2 id="题解-4"><a href="#题解-4" class="headerlink" title="题解"></a>题解</h2><p>最初的想法便是暴力法，暴力生成所有可能填满空白格，然后筛选出有效的，但是，这种操作时间复杂度巨高无比，一共 9<sup>81</sup> 种可能，不太现实的解法，所以需要对其优化，很显然，回溯法可以处理掉很多赘余操作</p>
+<p>讲回溯法之前，提两个小概念</p>
+<ol>
+<li><p>约束编程（Constraint programming）</p>
+<blockquote>
+<p>是一种编程典范，在这种编程范式中，变量之间的‘关系’是以约束的形式陈述（组织）的。这些‘关系（约束）’和命令式编程语言元素不同的是：它们并非明确说明了要去执行的步骤中的某一步，而是规范其解的一些属性。这样看来，约束编程是一种声明式的编程范式 // <a href="https://baike.baidu.com/item/%E7%BA%A6%E6%9D%9F%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener">摘录自百度百科</a></p>
+</blockquote>
+<p>针对这题，基本的意思是在放置每个数字时都设置约束，在数独上放置一个数字后立即排除当前 <strong>行</strong>，<strong>列</strong> 和 <strong>子方块</strong> 对该数字的使用。这会传播 <strong>约束条件</strong> 并有利于减少需要考虑组合的个数</p>
+<img src="/img/leetcode/37_1.png">
+</li>
+<li><p>回溯</p>
+<blockquote>
+<p>回溯算法实际上一个类似枚举的搜索尝试过程，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标 // <a href="https://baike.baidu.com/item/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">摘录自百度百科</a></p>
+</blockquote>
+<p>针对该题，假设已经在空格种放置了几个数字，当当前组合不是最优的并且不能继续放置数字了，就回溯到上一步，改变之前放置的数字并继续尝试，如果还不行，就再次回溯</p>
+<img src="/img/leetcode/37_2.png">
+
+</li>
+</ol>
+<p>上一题提过了枚举子方块索引的式子</p>
+<blockquote>
+<p><code>index = 行 / 3 * 3 + 列 / 3</code><br><code>/</code>代表整除</p>
+</blockquote>
+<img src="/img/leetcode/37_3.png">
+
+<p><strong>接下来理一下思路</strong></p>
+<ol>
+<li>设置一个数组<code>store[]</code>来存放原有元素</li>
+<li>先遍历大九宫格，存放原有元素到数组<code>store[]</code>中</li>
+<li>接着进入回溯算法<code>backtrace</code>，从<code>1</code>到<code>9</code>迭代，尝试把数字存入大九宫格，方法：<code>placeNumber</code><ul>
+<li>如果存入成功，那么存下一格<code>placeNextNumber</code></li>
+<li>如果失败，换一个数字继续尝试</li>
+</ul>
+</li>
+<li>当其中某种尝试达到了大九宫格末尾结束了，即得出结果</li>
+</ol>
+<p><strong>代码如下</strong></p>
+<p>在官方题解的基础上优化了空间复杂度，也做了其他小修改</p>
+<p><a href="https://leetcode-cn.com/problems/sudoku-solver/solution/jie-shu-du-by-leetcode/" target="_blank" rel="noopener">官方题解链接</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[][] board;</span><br><span class="line">    <span class="keyword">int</span> N = <span class="number">9</span>;</span><br><span class="line">    <span class="keyword">int</span>[] store = <span class="keyword">new</span> <span class="keyword">int</span>[N];</span><br><span class="line">    <span class="keyword">boolean</span> solved = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">removeNumber</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> value = (<span class="number">1</span> &lt;&lt; row)</span><br><span class="line">                | (<span class="number">1</span> &lt;&lt; (col + <span class="number">9</span>))</span><br><span class="line">                | (<span class="number">1</span> &lt;&lt; (row / <span class="number">3</span> * <span class="number">3</span> + col / <span class="number">3</span> + <span class="number">18</span>));</span><br><span class="line">        store[index] ^= value;</span><br><span class="line">        board[row][col] = <span class="string">'.'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">placeNextNumber</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((row == N - <span class="number">1</span>) &amp;&amp; (col == N - <span class="number">1</span>)) &#123;</span><br><span class="line">            solved = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (col == N - <span class="number">1</span>) &#123;</span><br><span class="line">            backtrack(row + <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            backtrack(row, col + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">placeNumber</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> value = (<span class="number">1</span> &lt;&lt; row)    <span class="comment">// 末尾九位存放行号</span></span><br><span class="line">                | (<span class="number">1</span> &lt;&lt; (col + <span class="number">9</span>))    <span class="comment">// 中间九位存放列号</span></span><br><span class="line">                | (<span class="number">1</span> &lt;&lt; (row / <span class="number">3</span> * <span class="number">3</span> + col / <span class="number">3</span> + <span class="number">18</span>));  <span class="comment">// 首部九位存放九宫格序号</span></span><br><span class="line">        <span class="keyword">int</span> pre = store[index];</span><br><span class="line">        <span class="keyword">if</span> ((pre &amp; value) != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        store[index] = pre | value;</span><br><span class="line">        board[row][col] = (<span class="keyword">char</span>)(index + <span class="string">'1'</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">backtrack</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (board[row][col] == <span class="string">'.'</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; N; index++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (placeNumber(index, row, col)) &#123;</span><br><span class="line">                    placeNextNumber(row, col);</span><br><span class="line">                    <span class="keyword">if</span> (!solved) &#123;</span><br><span class="line">                        removeNumber(index, row, col);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            placeNextNumber(row, col);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">solveSudoku</span><span class="params">(<span class="keyword">char</span>[][] board)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.board = board;</span><br><span class="line">        <span class="comment">// 首先记录一下已填数字</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; N; j++) &#123;</span><br><span class="line">                <span class="keyword">char</span> e = board[i][j];</span><br><span class="line">                <span class="keyword">if</span> (e != <span class="string">'.'</span>) &#123;</span><br><span class="line">                    <span class="keyword">int</span> index = e - <span class="string">'1'</span>;</span><br><span class="line">                    <span class="comment">// 这里肯定不会重复，忽略返回值</span></span><br><span class="line">                    placeNumber(index, i, j);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        backtrack(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>算法分析：</p>
+<ul>
+<li>时间复杂度：O( (9!)<sup>9</sup> )</li>
+<li>空间复杂度：O(9)</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Nopech 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Nopech 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 二分查找法</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag"><i class="fa fa-tag"></i> 动态规划</a>
+              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 回溯法</a>
+              <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag"><i class="fa fa-tag"></i> 位运算</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/06/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95%EF%BC%88BF-KMP-BM-Sunday%EF%BC%89/" rel="prev" title="字符串模式匹配算法（BF/KMP/BM/Sunday）">
+      <i class="fa fa-chevron-left"></i> 字符串模式匹配算法（BF/KMP/BM/Sunday）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/18/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E5%9B%9B%EF%BC%89/" rel="next" title="LeetCode算法经典题集（四）">
+      LeetCode算法经典题集（四） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#标注"><span class="nav-number">1.</span> <span class="nav-text">标注</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#32-最长有效括号（动态规划）"><span class="nav-number">2.</span> <span class="nav-text">32.最长有效括号（动态规划）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">2.1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题解"><span class="nav-number">2.2.</span> <span class="nav-text">题解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#暴力法"><span class="nav-number">2.2.1.</span> <span class="nav-text">暴力法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态规划"><span class="nav-number">2.2.2.</span> <span class="nav-text">动态规划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈"><span class="nav-number">2.2.3.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一次遍历"><span class="nav-number">2.2.4.</span> <span class="nav-text">一次遍历</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#33-搜索旋转排序数组（二分查找）"><span class="nav-number">3.</span> <span class="nav-text">33.搜索旋转排序数组（二分查找）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目-1"><span class="nav-number">3.1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题解-1"><span class="nav-number">3.2.</span> <span class="nav-text">题解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#34-在排序数组中查找元素的第一个和最后一个位置"><span class="nav-number">4.</span> <span class="nav-text">34.在排序数组中查找元素的第一个和最后一个位置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目-2"><span class="nav-number">4.1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题解-2"><span class="nav-number">4.2.</span> <span class="nav-text">题解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#循环二分查找"><span class="nav-number">4.2.1.</span> <span class="nav-text">循环二分查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#官方答案"><span class="nav-number">4.2.2.</span> <span class="nav-text">官方答案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#36-有效的数独（位运算）"><span class="nav-number">5.</span> <span class="nav-text">36.有效的数独（位运算）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目-3"><span class="nav-number">5.1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题解-3"><span class="nav-number">5.2.</span> <span class="nav-text">题解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一次迭代"><span class="nav-number">5.2.1.</span> <span class="nav-text">一次迭代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过位运算判重（✔）"><span class="nav-number">5.2.2.</span> <span class="nav-text">通过位运算判重（✔）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#思路"><span class="nav-number">5.2.2.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码"><span class="nav-number">5.2.2.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#37-解数独（回溯法）"><span class="nav-number">6.</span> <span class="nav-text">37.解数独（回溯法）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目-4"><span class="nav-number">6.1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题解-4"><span class="nav-number">6.2.</span> <span class="nav-text">题解</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Nopech"
+      src="/images/myavatar.png">
+  <p class="site-author-name" itemprop="name">Nopech</p>
+  <div class="site-description" itemprop="description">Thinking and coding.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Nopeful" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Nopeful" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:nopeyeply@gmail.com" title="E-Mail → mailto:nopeyeply@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/215912773" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;215912773" rel="noopener" target="_blank"><i class="fa fa-fw fa-youtube"></i>Bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Nope98687797" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Nope98687797" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v0n.top/" title="https:&#x2F;&#x2F;www.v0n.top" rel="noopener" target="_blank">VonLYC's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsbfdzz.github.io/" title="https:&#x2F;&#x2F;wsbfdzz.github.io&#x2F;" rel="noopener" target="_blank">小雨时宁的游戏小屋</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Nopech</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">234k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:33</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.0
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.25" zIndex="0.3" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '32e8dbe7b98bd0370d83',
+      clientSecret: '00cb2b11a235cf56fe011c1ad82256677d1d86a8',
+      repo: 'BlogComments',
+      owner: 'Nopeful',
+      admin: ['Nopeful'],
+      id: '22881ed55e12923a2daa943c42f64f6f',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

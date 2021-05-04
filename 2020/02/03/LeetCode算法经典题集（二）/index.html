@@ -54,22 +54,22 @@
 <meta property="og:site_name" content="Nopech&#39;s Blog">
 <meta property="og:description" content="LeetCode算法经典题集（二）,包括双指针法、深度优先搜索、回溯法、分治法、二分查找法、递归法等">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/img/14_2.png">
-<meta property="og:image" content="http://yoursite.com/img/14_1.png">
-<meta property="og:image" content="http://yoursite.com/img/17_telephone_keypad.png">
-<meta property="og:image" content="http://yoursite.com/img/23.png">
-<meta property="og:image" content="http://yoursite.com/img/25_reverse.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/14_2.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/14_1.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/17_telephone_keypad.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/23.png">
+<meta property="og:image" content="http://yoursite.com/img/leetcode/25_reverse.png">
 <meta property="article:published_time" content="2020-02-03T09:54:54.000Z">
-<meta property="article:modified_time" content="2020-02-06T05:31:23.009Z">
+<meta property="article:modified_time" content="2021-05-03T16:20:13.088Z">
 <meta property="article:author" content="Nopech">
 <meta property="article:tag" content="二分查找法">
+<meta property="article:tag" content="回溯法">
+<meta property="article:tag" content="双指针法">
 <meta property="article:tag" content="分治法">
 <meta property="article:tag" content="深度优先搜索">
-<meta property="article:tag" content="双指针法">
-<meta property="article:tag" content="回溯法">
 <meta property="article:tag" content="递归法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/img/14_2.png">
+<meta name="twitter:image" content="http://yoursite.com/img/leetcode/14_2.png">
 
 <link rel="canonical" href="http://yoursite.com/2020/02/03/LeetCode%E7%AE%97%E6%B3%95%E7%BB%8F%E5%85%B8%E9%A2%98%E9%9B%86%EF%BC%88%E4%BA%8C%EF%BC%89/">
 
@@ -158,17 +158,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">44</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">53</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">15</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">20</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-outlook">
@@ -259,7 +259,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-06 13:31:23" itemprop="dateModified" datetime="2020-02-06T13:31:23+08:00">2020-02-06</time>
+                <time title="修改时间：2021-05-04 00:20:13" itemprop="dateModified" datetime="2021-05-04T00:20:13+08:00">2021-05-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -346,7 +346,7 @@
 <h3 id="分治法"><a href="#分治法" class="headerlink" title="分治法"></a>分治法</h3><p><strong>思路</strong>：<br>这个算法的思路来自于LCP操作的结合律<br>我们可以发现 LCP(S<sub>1</sub>…S<sub>n</sub>) = LCP(LCP(S<sub>1</sub>…S<sub>k</sub>), LCP(S<sub>k+1</sub>…S<sub>n</sub>))<br>其中 LCP(S<sub>1</sub>…S<sub>n</sub>) 是字符串 (S<sub>1</sub>…S<sub>n</sub>) 的最长公共前缀， 1 &lt; k &lt; n</p>
 <p><strong>算法</strong><br>为了应用上述的结论，我们使用分治的技巧，将原问题 LCP(S<sub>i</sub>…S<sub>j</sub>) 分成两个子问题 LCP(S<sub>i</sub>…S<sub>mid</sub>) 与 LCP(S<sub>mid+1</sub>…S<sub>j</sub>)，其中 mid = (i + j) / 2</p>
 <p>我们用子问题的解 <code>lcpLeft</code> 与 <code>lcpRight</code> 构造原问题的解 LCP(S<sub>i</sub>…S<sub>j</sub>)<br>从头到尾挨个比较 lcpLeft 与 lcpRight 中的字符，直到不能再匹配为止<br>计算所得的 <code>lcpLeft</code> 与 <code>lcpRight</code> 最长公共前缀就是原问题的解 LCP(S<sub>i</sub>…S<sub>j</sub>)</p>
-<img src="/img/14_2.png">
+<img src="/img/leetcode/14_2.png">
 
 <p><strong>代码如下</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">longestCommonPrefix</span><span class="params">(String[] strs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (strs == <span class="keyword">null</span> || strs.length == <span class="number">0</span>) <span class="keyword">return</span> <span class="string">""</span>;    </span><br><span class="line">        <span class="keyword">return</span> longestCommonPrefix(strs, <span class="number">0</span> , strs.length - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">longestCommonPrefix</span><span class="params">(String[] strs, <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l == r) &#123;</span><br><span class="line">        <span class="keyword">return</span> strs[l];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (l + r)/<span class="number">2</span>;</span><br><span class="line">        String lcpLeft =   longestCommonPrefix(strs, l , mid);</span><br><span class="line">        String lcpRight =  longestCommonPrefix(strs, mid + <span class="number">1</span>,r);</span><br><span class="line">        <span class="keyword">return</span> commonPrefix(lcpLeft, lcpRight);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">String <span class="title">commonPrefix</span><span class="params">(String left,String right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> min = Math.min(left.length(), right.length());       </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; min; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( left.charAt(i) != right.charAt(i) )</span><br><span class="line">            <span class="keyword">return</span> left.substring(<span class="number">0</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left.substring(<span class="number">0</span>, min);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -362,7 +362,7 @@
 <li><p><code>S[1...mid]</code> 是所有串的公共前缀。 这表示对于所有的 <code>i &lt; j</code>， <code>S[1..i]</code> 都是可行的公共前缀，因为我们要找最长的公共前缀，所以我们可以把前半个查找区间丢弃</p>
 </li>
 </ul>
-<img src="/img/14_1.png">
+<img src="/img/leetcode/14_1.png">
 
 <p><strong>代码如下</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">longestCommonPrefix</span><span class="params">(String[] strs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (strs == <span class="keyword">null</span> || strs.length == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">int</span> minLen = Integer.MAX_VALUE;</span><br><span class="line">    <span class="keyword">for</span> (String str : strs)</span><br><span class="line">        minLen = Math.min(minLen, str.length());</span><br><span class="line">    <span class="keyword">int</span> low = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> high = minLen;</span><br><span class="line">    <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> middle = (low + high) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (isCommonPrefix(strs, middle))</span><br><span class="line">            low = middle + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            high = middle - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> strs[<span class="number">0</span>].substring(<span class="number">0</span>, (low + high) / <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isCommonPrefix</span><span class="params">(String[] strs, <span class="keyword">int</span> len)</span></span>&#123;</span><br><span class="line">    String str1 = strs[<span class="number">0</span>].substring(<span class="number">0</span>,len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; strs.length; i++)</span><br><span class="line">        <span class="keyword">if</span> (!strs[i].startsWith(str1))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -402,7 +402,7 @@
 </ul>
 <h1 id="17-电话号码的字母组合（回溯法）"><a href="#17-电话号码的字母组合（回溯法）" class="headerlink" title="17.电话号码的字母组合（回溯法）"></a>17.电话号码的字母组合（回溯法）</h1><h2 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h2><p>给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。</p>
 <p>给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。</p>
-<img src="/img/17_telephone_keypad.png">
+<img src="/img/leetcode/17_telephone_keypad.png">
 
 <p>示例:</p>
 <blockquote>
@@ -532,7 +532,7 @@
 </blockquote>
 <p>重复这一过程，直到我们得到了最终的有序链表。</p>
 <p>在每一次配对合并的过程中都会遍历几乎全部 <code>N</code> 个节点，并重复这一过程 <strong>log<sub>2</sub>k 次</strong></p>
- <img src="/img/23.png">
+ <img src="/img/leetcode/23.png">
 
 <p><strong>代码如下</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeKLists</span><span class="params">(ListNode[] lists)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = lists.length;</span><br><span class="line">    <span class="keyword">int</span> interval = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (interval &lt; len) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len - interval; i += interval * <span class="number">2</span>) &#123;</span><br><span class="line">            lists[i] = mergeTwoLists(lists[i], lists[i + interval]);</span><br><span class="line">        &#125;</span><br><span class="line">        interval *= <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len &gt; <span class="number">0</span> ? lists[<span class="number">0</span>] : <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">mergeTwoLists</span><span class="params">(ListNode l1, ListNode l2)</span> </span>&#123;</span><br><span class="line">    ListNode head = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">    ListNode point = head;</span><br><span class="line">    <span class="keyword">while</span> (l1 != <span class="keyword">null</span> &amp;&amp; l2 != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (l1.val &lt;= l2.val) &#123;</span><br><span class="line">            point.next = l1;</span><br><span class="line">            l1 = l1.next;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            point.next = l2;</span><br><span class="line">            l2 = l1;</span><br><span class="line">            l1 = point.next.next;</span><br><span class="line">        &#125;</span><br><span class="line">        point = point.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (l1 == <span class="keyword">null</span>) &#123;</span><br><span class="line">        point.next=l2;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        point.next=l1;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -612,7 +612,7 @@
 <blockquote>
 <p>传递的参数是<code>pre</code>和<code>end</code><br><code>pre</code>：待反转链表的哑指针<br><code>end</code>：待反转链表的最后一个节点</p>
 </blockquote>
-<p>附上流程图<br><img src="/img/25_reverse.png"></p>
+<p>附上流程图<br><img src="/img/leetcode/25_reverse.png"></p>
 <p>递归思路：<br>1）先设置一个哑节点<code>dummy</code><br>2）设置尾节点<code>end</code><br>3）尾节点<code>end</code>移动<code>k</code>次<br>4）另尾节点<code>end</code>的<code>next</code>下一个节点为经过函数<code>reverseKGroup</code>反转过的节点<br>5）对<code>dummy</code>到<code>end</code>之间的节点进行反转<br>6）返回新的头节点<code>dummy.next</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ListNode <span class="title">reverseKGroup</span><span class="params">(ListNode head, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="keyword">null</span> || k == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    ListNode dummy = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">    dummy.next = head;</span><br><span class="line">    ListNode end = dummy;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; i++) &#123;</span><br><span class="line">        end = end.next;</span><br><span class="line">        <span class="keyword">if</span> (end == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> dummy.next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    end.next = reverseKGroup(end.next, k);</span><br><span class="line">    dummy.next = reverse(dummy, end);</span><br><span class="line">    <span class="keyword">return</span> dummy.next;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ListNode <span class="title">reverse</span><span class="params">(ListNode pre, ListNode end)</span> </span>&#123;</span><br><span class="line">    ListNode tail = end.next;</span><br><span class="line">    ListNode cur = pre.next;</span><br><span class="line">    ListNode finish = tail;</span><br><span class="line">    <span class="keyword">while</span> (pre.next != finish) &#123;</span><br><span class="line">        pre.next = cur.next;</span><br><span class="line">        cur.next = tail;</span><br><span class="line">        tail = cur;</span><br><span class="line">        cur = pre.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tail;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>算法分析：</p>
@@ -651,10 +651,10 @@
           
           <div class="post-tags">
               <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 二分查找法</a>
+              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 回溯法</a>
+              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 双指针法</a>
               <a href="/tags/%E5%88%86%E6%B2%BB%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 分治法</a>
               <a href="/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" rel="tag"><i class="fa fa-tag"></i> 深度优先搜索</a>
-              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 双指针法</a>
-              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 回溯法</a>
               <a href="/tags/%E9%80%92%E5%BD%92%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 递归法</a>
           </div>
 
@@ -747,20 +747,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">44</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -773,10 +773,10 @@
         <a href="mailto:nopeyeply@gmail.com" title="E-Mail → mailto:nopeyeply@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://weibo.com/hasakiwa" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;hasakiwa" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+        <a href="https://space.bilibili.com/215912773" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;215912773" rel="noopener" target="_blank"><i class="fa fa-fw fa-youtube"></i>Bilibili</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://twitter.com/yourname" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+        <a href="https://twitter.com/Nope98687797" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Nope98687797" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
       </span>
   </div>
 
@@ -789,6 +789,9 @@
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
           <a href="https://www.v0n.top/" title="https:&#x2F;&#x2F;www.v0n.top" rel="noopener" target="_blank">VonLYC's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://wsbfdzz.github.io/" title="https:&#x2F;&#x2F;wsbfdzz.github.io&#x2F;" rel="noopener" target="_blank">小雨时宁的游戏小屋</a>
         </li>
     </ul>
   </div>
@@ -810,7 +813,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -820,13 +823,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">154k</span>
+    <span title="站点总字数">234k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:20</span>
+    <span title="站点阅读时长">3:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
   </div>
@@ -868,9 +871,7 @@
   </div>
 
   
-  
-  <script color='139,137,137' opacity='0.9' zIndex='-1' count='199' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
-  <script size="300" alpha="0.45" zIndex="0.5" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script size="300" alpha="0.25" zIndex="0.3" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
